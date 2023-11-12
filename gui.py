@@ -8,6 +8,15 @@ class MinesweeperGUI:
         self.master = master
         master.title("Minesweeper")
         self.logic = MinesweeperLogic(size, mines, size)  # Create an instance of the logic class
+        # cross-platform task tray icon 
+        # Get the appropriate icon file based on the OS
+        icon_file = config.get_task_tray_icon()
+
+        if icon_file.endswith('.ico'):
+            master.iconbitmap(icon_file)
+        else:
+            tt_img = tk.PhotoImage(file=icon_file)
+            master.iconphoto(True, tt_img)
 
         # Load the mine image once and keep a reference
         self.mine_image = tk.PhotoImage(file=config.mine_image)
@@ -37,8 +46,6 @@ class MinesweeperGUI:
         frame = tk.Frame(master)
         frame.grid(row=row, column=column, padx=0, pady=0, sticky="nsew")  # Use sticky to fill the space
         
-
-
         # Create the button and pack it into the frame
         button = tk.Button(frame, width=config.button_width,height=config.button_height)
         button.bind('<Button-1>', lambda event, r=row, c=column: self.on_left_click(r, c)(event))

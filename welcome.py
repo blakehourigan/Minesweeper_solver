@@ -1,19 +1,30 @@
 # welcome.py
 import tkinter as tk
-from config import DIFFICULTIES  # Import the configuration
+
+import config
 
 class WelcomeScreen:
     def __init__(self, master, start_game_callback):
         self.master = master
         self.start_game_callback = start_game_callback
         master.title("Welcome to Minesweeper")
+        
+        # Get the appropriate icon file based on the OS
+        icon_file = config.get_task_tray_icon()
+
+        if icon_file.endswith('.ico'):
+            master.iconbitmap(icon_file)
+        else:
+            tt_img = tk.PhotoImage(file=icon_file)
+            master.iconphoto(True, tt_img)
+
 
         tk.Label(master, text="Welcome to Minesweeper! Choose your difficulty:").pack()
 
         self.difficulty = tk.StringVar(master)
         self.difficulty.set("Beginner")  # default value
         
-        options = list(DIFFICULTIES.keys())  # Get difficulties from config
+        options = list(config.DIFFICULTIES.keys())  # Get difficulties from config
         
         # Create the OptionMenu and assign it to self.option_menu
         self.option_menu = tk.OptionMenu(master, self.difficulty, *options)

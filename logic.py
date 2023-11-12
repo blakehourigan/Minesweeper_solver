@@ -10,6 +10,7 @@ class MinesweeperLogic:
     def reveal_cell(self, row, column):
         if self.num_plays == 0:
             cell_info = 'empty'
+            self.num_plays += 1
         else:
             cell_info = 'mine'
         # Logic to reveal a cell; returns what's in the cell (mine, number, or empty)

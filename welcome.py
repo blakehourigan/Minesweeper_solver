@@ -1,34 +1,61 @@
+# welcome.py
 import tkinter as tk
-from gui import MinesweeperGUI
+from config import DIFFICULTIES  # Import the configuration
 
 class WelcomeScreen:
-    def __init__(self, master):
+    def __init__(self, master, start_game_callback):
         self.master = master
+        self.start_game_callback = start_game_callback
         master.title("Welcome to Minesweeper")
 
         tk.Label(master, text="Welcome to Minesweeper! Choose your difficulty:").pack()
 
         self.difficulty = tk.StringVar(master)
         self.difficulty.set("Beginner")  # default value
+        
+        options = list(DIFFICULTIES.keys())  # Get difficulties from config
+        
+        # Create the OptionMenu and assign it to self.option_menu
+        self.option_menu = tk.OptionMenu(master, self.difficulty, *options)
+        self.option_menu.pack()
+        
+        # set initial difficulty color based on default value
+        self.update_color()
+        
+        # Trace the variable to change the OptionMenu color
+        self.difficulty.trace("w", self.update_color)
 
-        options = ["Beginner", "Intermediate", "Expert"]
-        tk.OptionMenu(master, self.difficulty, *options).pack()
+        tk.Button(master, text="Start Game", command=self.on_start_game).pack()
+        
+        self.center_window(400, 100)  # Set the size of the window and center it
 
-        tk.Button(master, text="Start Game", command=self.start_game).pack()
-
-    def start_game(self):
+    def on_start_game(self):
         difficulty = self.difficulty.get()
-        # Translate difficulty to game settings (size and mine count)
-        if difficulty == "Beginner":
-            size, mines = 9, 10
-        elif difficulty == "Intermediate":
-            size, mines = 16, 40
-        elif difficulty == "Expert":
-            size, mines = 24, 99
-        else:
-            size, mines = 9, 10  # Fallback to default
+        self.start_game_callback(difficulty)  # Call the callback with the selected difficulty
 
-        self.master.destroy()  # Close the welcome screen
-        game_root = tk.Tk()  # Create a new Tk root for the game
-        game = MinesweeperGUI(game_root, size, mines)  # Start the game with the chosen difficulty
-        game_root.mainloop()
+    def update_color(self, *args):
+        difficulty = self.difficulty.get()
+        if difficulty == "Beginner":
+            color = "green"
+        elif difficulty == "Intermediate":
+            color = "yellow"
+        elif difficulty == "Expert":
+            color = "red"
+        else:
+            color = "white"  # Default color
+
+        self.option_menu.config(bg=color, activebackground=color)
+
+        # Additionally, bind the hover events to reset the color
+        self.option_menu.bind("<Enter>", lambda e: self.option_menu.config(bg=color))
+        self.option_menu.bind("<Leave>", lambda e: self.option_menu.config(bg=color))
+
+    def center_window(self, width, height):
+        # Get screen width and height
+        screen_width = self.master.winfo_screenwidth()
+        screen_height = self.master.winfo_screenheight()
+
+        # Calculate position x and y coordinates
+        x = (screen_width / 2) - (width / 2)
+        y = (screen_height / 2) - (height / 2)
+        self.master.geometry(f'{width}x{height}+{int(x)}+{int(y)}')

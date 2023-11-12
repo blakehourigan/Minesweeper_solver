@@ -7,7 +7,7 @@ class MinesweeperGUI:
     def __init__(self, master, size, mines):
         self.master = master
         master.title("Minesweeper")
-        self.logic = MinesweeperLogic(size, mines)  # Create an instance of the logic class
+        self.logic = MinesweeperLogic(size, mines, size)  # Create an instance of the logic class
 
         # Load the mine image once and keep a reference
         self.mine_image = tk.PhotoImage(file=config.mine_image)
@@ -36,11 +36,7 @@ class MinesweeperGUI:
         # Create a frame to hold the button
         frame = tk.Frame(master)
         frame.grid(row=row, column=column, padx=0, pady=0, sticky="nsew")  # Use sticky to fill the space
-        for i in range(size):
-            frame.rowconfigure(i, weight=0)
-
-        for j in range(size):
-            frame.columnconfigure(j, weight=0)
+        
 
 
         # Create the button and pack it into the frame
@@ -70,6 +66,8 @@ class MinesweeperGUI:
             if result == 'mine':
                 # Configure button image properties here
                 button.config(image=self.mine_image, width=config.button_width, height=config.button_height)
+            else:
+                pass
         return callback
 
 

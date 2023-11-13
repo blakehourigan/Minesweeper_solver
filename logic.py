@@ -27,8 +27,12 @@ class MinesweeperLogic:
 
     def toggle_flag(self, row, column):
         # Logic to toggle a flag on a cell
-        pass
-
+        if (not self.board[row][column].is_revealed) and not self.board[row][column].get_type() == 'flag':
+            self.board[row][column].set_type("flag")
+            return 'setflag'
+        else:
+            return 'unset_flag'
+        
     def fill_board(self):
         total_mines = self.num_mines
         mines_placed = 0
@@ -41,6 +45,12 @@ class MinesweeperLogic:
             if not self.board[row][column].is_mine:
                 self.board[row][column].set_type("mine")
                 mines_placed += 1
+    
+    def clear_adjacents(self):
+        pass
+    
+    def count_adjacents(self):
+        pass
     
     def restart_game(self):
         exit()

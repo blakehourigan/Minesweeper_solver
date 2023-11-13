@@ -21,6 +21,7 @@ class MinesweeperGUI:
 
         # Load the mine image once and keep a reference
         self.mine_image = tk.PhotoImage(file=config.mine_image)
+        self.flag_image = tk.PhotoImage(file=config.flag_image)
 
         # Set the master frame's row and column configurations
         for i in range(size):
@@ -49,7 +50,11 @@ class MinesweeperGUI:
         
         # Create the button and pack it into the frame
         button = tk.Button(frame, width=config.button_width,height=config.button_height)
+        # left click selects a cell
         button.bind('<Button-1>', lambda event, r=row, c=column: self.on_left_click(r, c)(event))
+        # right click bound to setting flags
+        button.bind('<Button-3>', lambda event, r=row, c=column: self.on_right_click(r, c)(event))
+
         button.pack(expand=True, fill='both')  # Button will fill the entire frame
 
         return button
@@ -71,13 +76,36 @@ class MinesweeperGUI:
             button = event.widget
             button.config(relief=tk.SUNKEN, state=tk.DISABLED)
 
-            if result == 'mine':
+
+            if result == 'empty':
+                self.logic.clear_adjacents()
+            elif result == 'mine':
                 # Configure button image properties here
                 button.config(image=self.mine_image, width=config.button_width, height=config.button_height)
                 self.game_over()
-
+            elif result == '1':
+                self.logic.count_adjacents()
+            elif result == '2':
+                self.logic.count_adjacents()
+            elif result == '3': 
+                self.logic.count_adjacents()
             else:
                 pass
+        return callback
+    
+    def on_right_click(self, row, column):
+        """Handles left click for revealing the tile."""
+        def callback(event):
+            action = self.logic.toggle_flag(row, column)
+            if action == 'setflag':
+                button = event.widget
+                button.config(relief=tk.SUNKEN, state=tk.DISABLED)
+                button.config(image=self.flag_image, width=config.button_width, height=config.button_height)
+            elif action == 'unset_flag':
+                button = event.widget
+                button.config(relief=tk.RAISED, state=tk.DISABLED)
+                button.config(image=self.flag_image, width=config.button_width, height=config.button_height)
+
         return callback
 
 

@@ -30,10 +30,10 @@ class MinesweeperLogic:
         """ this function tells the gui to set a flag or unset flag based on user input and game state """
         cell = self.board[row][column]
 
-        if (not cell.is_revealed) and not cell.get_type() == 'flag':
+        if (not cell.is_revealed) and not cell.is_flagged:
             cell.is_flagged = True
             return 'setflag'
-        elif (not cell.is_revealed) and cell.get_type() == 'flag':
+        elif (not cell.is_revealed) and cell.is_flagged:
             cell.is_flagged = False
             return 'unset_flag'
         else:
@@ -54,18 +54,21 @@ class MinesweeperLogic:
                 mines_placed += 1
     
     def fill_remaining_board(self):
+        """ after bombs are placed, we fill the rest of the cells with numbers or empty spaces"""
         for row_number, row in enumerate(self.board):
             for col, cell in enumerate(row):
                 if cell.get_type() == 'mine':
                     continue
-                else:
-                    cell.adjacent_mines = self.count_adjacents(row_number, col, cell)
+                elif self.count_adjacents(row_number, col) > 0:
+                    cell.adjacent_mines = self.count_adjacents(row_number, col)
                     cell.set_type(str(cell.adjacent_mines))
+                else:
+                    cell.set_type("empty")
 
-    def clear_adjacents(self):
+    def clear_adjacents(self): 
         pass
     
-    def count_adjacents(self, row, col, cell):
+    def count_adjacents(self, row, col):
         """ function that checks the adjacent cells for mines if they exist """
         neighbor_positions = [(-1, -1), (-1, 0), (-1, 1),  # Above row
                             (0, -1),           (0, 1),    # Same row
@@ -89,3 +92,6 @@ class MinesweeperLogic:
                 if not cell.type == 'mine' and not cell.is_revealed:
                     return False
         return True                    
+    
+    def get_score(self):
+        return self.score

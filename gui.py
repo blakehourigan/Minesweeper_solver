@@ -1,5 +1,6 @@
 # gui.py
 import tkinter as tk
+import time
 
 from logic import MinesweeperLogic
 import config
@@ -13,35 +14,27 @@ class MinesweeperGUI:
         self.logic = MinesweeperLogic(size, mines)  # Create an instance of the logic class
         
         self.mines_left = mines
-         
-        # Get the appropriate icon file based on the OS
-        icon_file = config.get_task_tray_icon()
+        self.score = 0
+        self.running = False
+        
+        self.setup_timer(self.master, size)
+        
+        self.update_timer()
+    
+        self.load_image(self.master)
 
-        if icon_file.endswith('.ico'):
-            master.iconbitmap(icon_file)
-        else:
-            tt_img = tk.PhotoImage(file=icon_file)
-            master.iconphoto(True, tt_img)
-
-        # Load the mine image once and keep a reference
-        self.mine_image = tk.PhotoImage(file=config.mine_image)
-        self.flag_image = tk.PhotoImage(file=config.flag_image)
-
-        # Set the master frame's row and column configurations
-        for i in range(size):
-            master.grid_columnconfigure(i, weight=1)
-            master.grid_rowconfigure(i, weight=1)
+        self.setup_grid(self.master, size)
 
         # Initialize a grid of buttons with frames
-        self.buttons = [[self.create_button(master, row, column, config.button_width, config.button_height, size)
+        self.buttons = [[self.create_button(master, row + 1, column, config.button_width, config.button_height, size)
                         for column in range(size)] for row in range(size)]
 
         # Disable window resizing
         master.resizable(False, False)
 
         # Set the minimum window size to accommodate the grid
-        window_width = size * config.button_width
-        window_height = size * config.button_height
+        window_width = (size * config.button_width)
+        window_height = (size * config.button_height)
         master.minsize(window_width, window_height)
 
         # Center the window
@@ -114,10 +107,49 @@ class MinesweeperGUI:
                     button.config(image='')
                 else:
                     pass
-
-
         return callback
 
+    def load_image(self, master):
+        # Get the appropriate icon file based on the OS
+        icon_file = config.get_task_tray_icon()
+
+        if icon_file.endswith('.ico'):
+            master.iconbitmap(icon_file)
+        else:
+            tt_img = tk.PhotoImage(file=icon_file)
+            master.iconphoto(True, tt_img)
+
+        # Load the mine image once and keep a reference
+        self.mine_image = tk.PhotoImage(file=config.mine_image)
+        self.flag_image = tk.PhotoImage(file=config.flag_image)
+
+    def setup_grid(self, master, size):
+        # Adjust layout for the new elements
+        master.grid_rowconfigure(1, weight=1)  # Adjusting for the new row with labels
+        # create layout for the elements on the screen
+        master.grid_rowconfigure(0, weight=0)  
+        for i in range(1, size + 1):
+            master.grid_rowconfigure(i, weight=1)  # Create a grid that has height of size + 1 to fit timer and score labels
+        for i in range(size):
+            master.grid_columnconfigure(i, weight=1)
+
+    def setup_timer(self, master, size):
+        # Timer and Score Labels
+        self.timer_label = tk.Label(master, text="Time: 0s")
+        self.timer_label.grid(row=0, column=0, columnspan=size//2, sticky="w")
+
+        self.score_label = tk.Label(master, text="Score: 0")
+        self.score_label.grid(row=0, column=size//2, columnspan=size//2, sticky="e")
+        if not self.running:
+            self.start_time = time.time()
+            self.running = True
+            self.update_timer()
+
+    def update_timer(self):
+        if self.running:
+            elapsed_time = int(time.time() - self.start_time)
+            self.timer_label.config(text=f"Time: {elapsed_time}s")
+            self.master.after(1000, self.update_timer)
 
     def update_board(self):
         pass

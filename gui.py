@@ -8,8 +8,10 @@ class MinesweeperGUI:
         self.master = master
         master.title("Minesweeper")
         self.game_over = on_game_over
-        self.logic = MinesweeperLogic(size, mines, size)  # Create an instance of the logic class
-        # cross-platform task tray icon 
+        self.logic = MinesweeperLogic(size, mines)  # Create an instance of the logic class
+        
+        self.mines_left = mines
+         
         # Get the appropriate icon file based on the OS
         icon_file = config.get_task_tray_icon()
 
@@ -76,18 +78,15 @@ class MinesweeperGUI:
             button = event.widget
             button.config(relief=tk.SUNKEN, state=tk.DISABLED)
 
-
             if result == 'empty':
+                self.mines_left -= 1 
                 self.logic.clear_adjacents()
             elif result == 'mine':
                 # Configure button image properties here
                 button.config(image=self.mine_image, width=config.button_width, height=config.button_height)
                 self.game_over()
             elif result == '1':
-                self.logic.count_adjacents()
-            elif result == '2':
-                self.logic.count_adjacents()
-            elif result == '3': 
+                self.mines_left -= 1 
                 self.logic.count_adjacents()
             else:
                 pass
@@ -96,15 +95,21 @@ class MinesweeperGUI:
     def on_right_click(self, row, column):
         """Handles left click for revealing the tile."""
         def callback(event):
-            action = self.logic.toggle_flag(row, column)
-            if action == 'setflag':
-                button = event.widget
-                button.config(relief=tk.SUNKEN, state=tk.DISABLED)
-                button.config(image=self.flag_image, width=config.button_width, height=config.button_height)
-            elif action == 'unset_flag':
-                button = event.widget
-                button.config(relief=tk.RAISED, state=tk.DISABLED)
-                button.config(image=self.flag_image, width=config.button_width, height=config.button_height)
+            button = event.widget
+            if button.cget('relief') == tk.SUNKEN:
+                return callback 
+            else:
+                action = self.logic.toggle_flag(row, column)
+                if action == 'setflag':
+                    
+                    button.config(image=self.flag_image, width=config.button_width, height=config.button_height)
+                elif action == 'unset_flag':
+                    button.config(relief=tk.RAISED)
+                    button.config(image=self.flag_image, width=config.button_width, height=config.button_height)
+                    button.config(image='')
+                else:
+                    pass
+
 
         return callback
 

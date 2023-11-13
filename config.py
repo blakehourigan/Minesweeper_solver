@@ -8,6 +8,7 @@ script_location = Path(__file__).resolve().parent
 mine_image = str(script_location / 'assets' / 'bomb.png')
 task_tray_image = str(script_location / 'assets' / 'task_tray.png')
 task_tray_image_ico = str(script_location / 'assets' / 'task_tray_ico.ico')
+game_over_png = str(script_location / 'assets' / 'game_over.png')
 
 
 DIFFICULTIES = {
@@ -18,8 +19,8 @@ DIFFICULTIES = {
 
 # gui related configuration
 
-button_width = 50
-button_height = 50
+button_width = 30
+button_height = 30
 
 def get_task_tray_icon():
     if platform.system() == "Windows":

@@ -30,14 +30,6 @@ class MinesweeperGUI:
         # Disable window resizing
         master.resizable(False, False)
 
-        # Set the minimum window size to accommodate the grid
-        window_width = (size * config.button_width)
-        window_height = (size * config.button_height)
-        master.minsize(window_width, window_height)
-
-        # Center the window
-        self.center_window(window_width, window_height)
-
     def create_button(self, master, row, column, width, height, size):
         # Create a frame to hold the button
         frame = tk.Frame(master)

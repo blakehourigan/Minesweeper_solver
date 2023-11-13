@@ -30,6 +30,14 @@ class MinesweeperGUI:
         # Disable window resizing
         master.resizable(False, False)
 
+        # Set the minimum window size to accommodate the grid
+        window_width = size * config.button_width
+        window_height = size * config.button_height
+        master.minsize(window_width, window_height)
+
+        # Center the window
+        self.center_window(window_width, window_height)
+
     def create_button(self, master, row, column, width, height, size):
         # Create a frame to hold the button
         frame = tk.Frame(master)
@@ -62,14 +70,15 @@ class MinesweeperGUI:
             result = self.logic.reveal_cell(row, column)
             button = event.widget
             button.config(relief=tk.SUNKEN, state=tk.DISABLED)
-            
+            print(result)
             # check for a win
             if self.logic.check_for_win():
                 self.win_window()
             
             # else, keep playing
             if result == 'empty':
-                self.logic.clear_adjacents()
+                to_reveal = self.logic.clear_adjacents(row, column)
+                self.clear_adjacents(to_reveal)
             elif result == 'mine':
                 # Configure button image properties here
                 button.config(image=self.mine_image, width=config.button_width, height=config.button_height)
@@ -81,6 +90,23 @@ class MinesweeperGUI:
             else:
                 pass
         return callback
+    
+    def clear_adjacents(self, to_reveal):
+        print(to_reveal)
+        for row, col in to_reveal:
+            button = self.buttons[row][col]
+            cell = self.logic.board[row][col]
+
+            button.config(relief=tk.SUNKEN, state=tk.DISABLED)
+
+            if cell.get_type() == 'empty':
+                # Update button for an empty cell
+                # You can configure it to have a different appearance if needed
+                pass
+            elif cell.get_type().isdigit():
+                # Update button for a cell with adjacent mines
+                color = config.MINE_COLORMAP.get(int(cell.get_type()))
+                button.config(text=cell.get_type(), bg=color, fg='white')
     
     def on_right_click(self, row, column):
         """Handles left click for revealing the tile."""

@@ -65,8 +65,31 @@ class MinesweeperLogic:
                 else:
                     cell.set_type("empty")
 
-    def clear_adjacents(self): 
-        pass
+    def clear_adjacents(self, row, col): 
+        """ function that checks if adjacent cells are empty, and if so it clears them"""
+        to_reveal = set()
+        to_reveal.add((row, col))
+
+        while to_reveal:
+            current_row, current_col = to_reveal.pop()
+
+            if not self.board[current_row][current_col].is_revealed:
+                self.board[current_row][current_col].is_revealed = True
+
+                if self.board[current_row][current_col].get_type() == 'empty':
+                    neighbor_positions = [(-1, -1), (-1, 0), (-1, 1),  # Above row
+                                        (0, -1),           (0, 1),    # Same row
+                                        (1, -1), (1, 0), (1, 1)]     # Below row
+
+                    for row_offset, col_offset in neighbor_positions:
+                        neighbor_row, neighbor_col = current_row + row_offset, current_col + col_offset
+                        # Check if the neighbor is within the bounds of the board
+                        if 0 <= neighbor_row < len(self.board) and 0 <= neighbor_col < len(self.board[0]):
+                            # Add the cell to be revealed if it is not a mine and not already revealed
+                            if not self.board[neighbor_row][neighbor_col].is_mine:
+                                to_reveal.add((neighbor_row, neighbor_col))
+            return to_reveal
+
     
     def count_adjacents(self, row, col):
         """ function that checks the adjacent cells for mines if they exist """

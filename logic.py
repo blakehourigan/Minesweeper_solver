@@ -9,7 +9,6 @@ class MinesweeperLogic:
         self.mine_positions = set()
         self.cell_states = [['hidden' for _ in range(grid_size)] for _ in range(grid_size)]
 
-        
         self.size = size
         self.board = [[Cell() for _ in range(size)] for _ in range(size)]
         self.num_moves = 0
@@ -42,5 +41,11 @@ class MinesweeperLogic:
             if not self.board[row][column].is_mine:
                 self.board[row][column].set_type("mine")
                 mines_placed += 1
-
+    
+    def restart_game(self):
+        exit()
+        
+    def exit_game(self):
+        exit()
+    
     # More game logic methods as needed...

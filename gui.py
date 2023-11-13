@@ -4,9 +4,10 @@ from logic import MinesweeperLogic
 import config
 
 class MinesweeperGUI:
-    def __init__(self, master, size, mines):
+    def __init__(self, master, size, mines, on_game_over):
         self.master = master
         master.title("Minesweeper")
+        self.game_over = on_game_over
         self.logic = MinesweeperLogic(size, mines, size)  # Create an instance of the logic class
         # cross-platform task tray icon 
         # Get the appropriate icon file based on the OS
@@ -73,6 +74,8 @@ class MinesweeperGUI:
             if result == 'mine':
                 # Configure button image properties here
                 button.config(image=self.mine_image, width=config.button_width, height=config.button_height)
+                self.game_over()
+
             else:
                 pass
         return callback

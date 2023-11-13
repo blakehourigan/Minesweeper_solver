@@ -1,3 +1,4 @@
+# gui.py
 import tkinter as tk
 
 from logic import MinesweeperLogic

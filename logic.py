@@ -1,3 +1,4 @@
+# logic.py
 import random
 
 from cell import Cell

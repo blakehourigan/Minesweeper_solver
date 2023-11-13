@@ -18,6 +18,14 @@ DIFFICULTIES = {
     "Expert": {"size": 24, "mines": 99}
 }
 
+MINE_COLORMAP = {
+    1 : 'blue',
+    2 : 'green', 
+    3 : 'red',
+    4 : 'navy',
+    5 : 'orange red'
+}
+
 # gui related configuration
 
 button_width = 30

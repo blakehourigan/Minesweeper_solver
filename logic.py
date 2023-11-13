@@ -98,10 +98,3 @@ class MinesweeperLogic:
                 if not cell.type == 'mine' and not cell.is_revealed:
                     return False
         return True                    
-    
-    def restart_game(self):
-        exit()
-        
-    def exit_game(self):
-        exit()
-    

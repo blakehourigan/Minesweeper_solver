@@ -79,14 +79,14 @@ class MinesweeperGUI:
             button.config(relief=tk.SUNKEN, state=tk.DISABLED)
 
             if result == 'empty':
-                self.mines_left -= 1 
                 self.logic.clear_adjacents()
             elif result == 'mine':
                 # Configure button image properties here
                 button.config(image=self.mine_image, width=config.button_width, height=config.button_height)
                 self.game_over()
-            elif result == '1':
-                self.mines_left -= 1
+            elif result.isdigit() and int(result) != 0:
+                color = config.MINE_COLORMAP.get(int(result))
+                button.config(text=result, bg=color, fg='white', width=config.button_width, height=config.button_height)
             else:
                 pass
         return callback
@@ -101,7 +101,7 @@ class MinesweeperGUI:
                 action = self.logic.toggle_flag(row, column)
                 if action == 'setflag':
                     
-                    button.config(image=self.flag_image, width=config.button_width, height=config.button_height)
+                    button.config(image=self.flag_image, width=config.button_width, height=config.button_height )
                 elif action == 'unset_flag':
                     button.config(relief=tk.RAISED)
                     button.config(image=self.flag_image, width=config.button_width, height=config.button_height)

@@ -23,11 +23,13 @@ DIFFICULTIES = {
 }
 
 MINE_COLORMAP = {
-    1 : 'blue',
-    2 : 'green', 
-    3 : 'red',
-    4 : 'navy',
-    5 : 'orange red'
+    '1' : 'blue',
+    '2' : 'green', 
+    '3' : 'red',
+    '4' : 'navy',
+    '5' : 'orange red',
+    'empty' : 'white',
+    'mine' : 'grey'
 }
 
 # gui related configuration

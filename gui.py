@@ -70,11 +70,12 @@ class MinesweeperGUI:
             result = self.logic.reveal_cell(row, column)
             button = event.widget
             button.config(relief=tk.SUNKEN, state=tk.DISABLED)
-            print(result)
+            
+            cell = self.logic.board[row][column]
+            cell.is_revealed = True
             # check for a win
             if self.logic.check_for_win():
                 self.win_window()
-            
             # else, keep playing
             if result == 'empty':
                 to_reveal = self.logic.clear_adjacents(row, column)
@@ -83,16 +84,33 @@ class MinesweeperGUI:
                 # Configure button image properties here
                 button.config(image=self.mine_image, width=config.button_width, height=config.button_height)
                 self.running = False
+                self.reveal_board()
+                time.sleep(5)  # Consider if this delay is necessary or optimal
                 self.loss_window()
-            elif result.isdigit() and int(result) != 0:
-                color = config.MINE_COLORMAP.get(int(result))
+            elif str(result).isdigit() and result != '0':
+                color = config.MINE_COLORMAP.get(result)
                 button.config(text=result, bg=color, fg='white', width=config.button_width, height=config.button_height)
             else:
                 pass
         return callback
     
+    def reveal_board(self):
+        for row_index, row_entries in enumerate(self.logic.board):
+            for col_index, cell in enumerate(row_entries):
+                self._update_button_if_not_revealed(row_index, col_index, cell)
+
+    def _update_button_if_not_revealed(self, row_index, col_index, cell):
+        if not cell.is_revealed:
+            button = self.buttons[row_index][col_index]
+            self._configure_button(button, cell)
+
+    def _configure_button(self, button, cell):
+        cell_type = cell.get_type()
+        color = config.MINE_COLORMAP.get(cell_type)
+        button.config(relief=tk.SUNKEN, state=tk.DISABLED, bg=color)
+        self.master.update()
+        
     def clear_adjacents(self, to_reveal):
-        print(to_reveal)
         for row, col in to_reveal:
             button = self.buttons[row][col]
             cell = self.logic.board[row][col]
@@ -105,7 +123,7 @@ class MinesweeperGUI:
                 pass
             elif cell.get_type().isdigit():
                 # Update button for a cell with adjacent mines
-                color = config.MINE_COLORMAP.get(int(cell.get_type()))
+                color = config.MINE_COLORMAP.get(cell.get_type())
                 button.config(text=cell.get_type(), bg=color, fg='white')
     
     def on_right_click(self, row, column):
@@ -167,6 +185,3 @@ class MinesweeperGUI:
             elapsed_time = int(time.time() - self.start_time)
             self.timer_label.config(text=f"Time: {elapsed_time}s")
             self.master.after(1000, self.update_timer)
-
-    def update_board(self):
-        pass

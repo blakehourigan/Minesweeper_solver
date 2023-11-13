@@ -18,8 +18,6 @@ class MinesweeperGUI:
         self.running = False
         
         self.setup_timer(self.master, size)
-        
-        self.update_timer()
     
         self.load_image(self.master)
 
@@ -83,6 +81,7 @@ class MinesweeperGUI:
             elif result == 'mine':
                 # Configure button image properties here
                 button.config(image=self.mine_image, width=config.button_width, height=config.button_height)
+                self.running = False
                 self.loss_window()
             elif result.isdigit() and int(result) != 0:
                 color = config.MINE_COLORMAP.get(int(result))
@@ -134,7 +133,7 @@ class MinesweeperGUI:
             master.grid_columnconfigure(i, weight=1)
 
     def setup_timer(self, master, size):
-        # Timer and Score Labels
+        """ function to setup the timer labels and set the timer to running """
         self.timer_label = tk.Label(master, text="Time: 0s")
         self.timer_label.grid(row=0, column=0, columnspan=size//2, sticky="w")
 

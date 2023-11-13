@@ -107,7 +107,6 @@ class MinesweeperGUI:
             else:
                 action = self.logic.toggle_flag(row, column)
                 if action == 'setflag':
-                    
                     button.config(image=self.flag_image, width=config.button_width, height=config.button_height )
                 elif action == 'unset_flag':
                     button.config(relief=tk.RAISED)

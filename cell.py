@@ -4,6 +4,7 @@ class Cell:
     def __init__(self):
         self.type = "blank"
         self.is_mine = False
+        self.is_flagged = False
         self.adjacent_mines = 0
         self.is_revealed = False
 

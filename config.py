@@ -5,12 +5,15 @@ from pathlib import Path
 
 # Construct an absolute path to the image
 script_location = Path(__file__).resolve().parent
+
 mine_image = str(script_location / 'assets' / 'bomb.png')
 flag_image = str(script_location / 'assets' / 'flag.png')
+
 task_tray_image = str(script_location / 'assets' / 'task_tray.png')
 task_tray_image_ico = str(script_location / 'assets' / 'task_tray_ico.ico')
-game_over_png = str(script_location / 'assets' / 'game_over.png')
 
+game_over_png = str(script_location / 'assets' / 'game_over.png')
+winner_png = str(script_location / 'assets' / 'winner.png')
 
 DIFFICULTIES = {
     "Beginner": {"size": 9, "mines": 10},

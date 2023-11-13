@@ -12,7 +12,6 @@ class MinesweeperLogic:
 
     def reveal_cell(self, row, column):
         """Logic to reveal a cell; returns what's in the cell (mine, number, or empty)"""
-        self.check_for_win()
         cell = self.board[row][column]
         if self.num_moves == 0:
             cell_type = 'empty'

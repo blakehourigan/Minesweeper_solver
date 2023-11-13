@@ -4,10 +4,11 @@ from logic import MinesweeperLogic
 import config
 
 class MinesweeperGUI:
-    def __init__(self, master, size, mines, on_game_over):
+    def __init__(self, master, size, mines, loss_window, win_window):
         self.master = master
         master.title("Minesweeper")
-        self.game_over = on_game_over
+        self.loss_window = loss_window
+        self.win_window = win_window
         self.logic = MinesweeperLogic(size, mines)  # Create an instance of the logic class
         
         self.mines_left = mines
@@ -77,13 +78,18 @@ class MinesweeperGUI:
             result = self.logic.reveal_cell(row, column)
             button = event.widget
             button.config(relief=tk.SUNKEN, state=tk.DISABLED)
-
+            
+            # check for a win
+            if self.logic.check_for_win():
+                self.win_window()
+            
+            # else, keep playing
             if result == 'empty':
                 self.logic.clear_adjacents()
             elif result == 'mine':
                 # Configure button image properties here
                 button.config(image=self.mine_image, width=config.button_width, height=config.button_height)
-                self.game_over()
+                self.loss_window()
             elif result.isdigit() and int(result) != 0:
                 color = config.MINE_COLORMAP.get(int(result))
                 button.config(text=result, bg=color, fg='white', width=config.button_width, height=config.button_height)

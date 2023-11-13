@@ -4,6 +4,7 @@ import tkinter as tk
 from gui import MinesweeperGUI
 import config
 from game_over import EndSplashScreen
+from winner import WinSplashScreen
 from welcome import WelcomeScreen
 
 class GameManager:
@@ -20,10 +21,15 @@ class GameManager:
         settings = config.DIFFICULTIES.get(difficulty, config.DIFFICULTIES["Beginner"])
         # Clear any existing screen and start the game
         self.clear_screen()
-        self.current_screen = MinesweeperGUI(self.root, **settings, on_game_over=self.show_end_screen)
+        self.current_screen = MinesweeperGUI(self.root, **settings, loss_window=self.show_end_screen, win_window=self.show_win_screen)
 
+    def show_win_screen(self):
+        """ clear the gui and show the winner splash scree """
+        self.clear_screen()
+        self.current_screen = WinSplashScreen(self.root, self.restart_game, self.destroy_game)
+    
     def show_end_screen(self):
-        # Clear the current GUI and show the end game splash screen
+        """ Clear the current GUI and show the end game splash screen """
         self.clear_screen()
         self.current_screen = EndSplashScreen(self.root, self.restart_game, self.destroy_game)
 

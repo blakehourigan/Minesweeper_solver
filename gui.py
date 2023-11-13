@@ -86,8 +86,7 @@ class MinesweeperGUI:
                 button.config(image=self.mine_image, width=config.button_width, height=config.button_height)
                 self.game_over()
             elif result == '1':
-                self.mines_left -= 1 
-                self.logic.count_adjacents()
+                self.mines_left -= 1
             else:
                 pass
         return callback
@@ -114,3 +113,5 @@ class MinesweeperGUI:
         return callback
 
 
+    def update_board(self):
+        pass

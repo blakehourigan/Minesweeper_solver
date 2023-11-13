@@ -6,7 +6,7 @@ class Cell:
         self.is_revealed = False
 
     def __str__(self):
-        return f"Type: {self.type} \n# Adjacent mines: {self.adjacent_mines}\nRevealed: {self.is_revealed}"
+        return f"\nType: {self.type} \n# Adjacent mines: {self.adjacent_mines}\nRevealed: {self.is_revealed}"
     
     def get_type(self):
         return self.type

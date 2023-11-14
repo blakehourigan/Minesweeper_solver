@@ -11,11 +11,7 @@ class MinesweeperGUI:
         master.title("Minesweeper")
         self.loss_window = loss_window
         self.win_window = win_window
-        self.logic = MinesweeperLogic(size, mines)  # Create an instance of the logic class
-        
-        self.mines_left = mines
-        self.score = 0
-        self.running = False
+        self.logic = MinesweeperLogic(size, mines)  # Create an instance of the logic class to use here 
         
         self.setup_timer(self.master, size)
     
@@ -43,7 +39,7 @@ class MinesweeperGUI:
         frame = tk.Frame(master)
         frame.grid(row=row, column=column, padx=0, pady=0, sticky="nsew")  # Use sticky to fill the space
         
-        # Create the button and pack it into the frame
+        # Create the button
         button = tk.Button(frame, width=config.button_width,height=config.button_height)
         # left click selects a cell
         button.bind('<Button-1>', lambda event, r=row, c=column: self.on_left_click(r, c)(event))
@@ -68,7 +64,7 @@ class MinesweeperGUI:
         """Handles left click for revealing the tile."""
         def callback(event):
             # we need to adjust everything down by one, because an extra row is generated to house the timer and score labels
-            logic_row, logic_column  = row - 1, column - 1 
+            logic_row, logic_column  = row - 1, column 
             
             result = self.logic.reveal_cell(logic_row, logic_column)
             button = event.widget
@@ -86,16 +82,15 @@ class MinesweeperGUI:
                 self.master.update()
             elif result == 'mine':
                 # configure button image properties
-                button.config(image=self.mine_image, width=config.button_width, height=config.button_height)
-                self.running = False
+                self._configure_button(button, cell)
+                self.logic.running = False
                 # reveal and show the board to the player
                 self.reveal_board()
                 time.sleep(5)
                 
                 self.loss_window()
             elif str(result).isdigit() and result != '0':
-                color = config.MINE_COLORMAP.get(result)
-                button.config(text=result, bg=color, fg='white', width=config.button_width, height=config.button_height)
+                self._configure_button(button, cell)
             else:
                 pass
             self.update_score()
@@ -113,52 +108,46 @@ class MinesweeperGUI:
             button = self.buttons[row_index][col_index]
             self._configure_button(button, cell)
 
-    def _configure_button(self, button, cell):
+    def _configure_button(self, button, cell, action = None):
         """ helper function to configure the button to color the cell based on cell type """
-        cell_type = cell.get_type()
-        color = config.MINE_COLORMAP.get(cell_type)
-        button.config(relief=tk.SUNKEN, state=tk.DISABLED, bg=color)
-        self.map_type_to_content(cell, button)
+        if action:
+            if action == 'setflag':
+                button.config(image=self.flag_image, width=config.button_width, height=config.button_height )
+            elif action == 'unset_flag':
+                button.config(relief=tk.RAISED)
+                button.config(image=self.flag_image, width=config.button_width, height=config.button_height)
+                button.config(image='')
+        else:
+            cell_type = cell.get_type()
+            color = config.MINE_COLORMAP.get(cell_type)
+            button.config(relief=tk.SUNKEN, state=tk.DISABLED, bg=color)
+            if cell.type == 'mine':
+                button.config(relief=tk.RAISED, state=tk.DISABLED, bg=color)
+                button.config(image=self.mine_image)
+            elif cell.type != 'empty' and cell.type != 'flag':
+                button.config(text=cell.type)
         self.master.update()
-        
-    def map_type_to_content(self, cell, button):
-        if cell.type == 'mine':
-            button.config(image=self.mine_image)
-        elif cell.type != 'empty':
-            button.config(text=cell.type)
-        
+
     def clear_adjacents(self, to_reveal):
+        """ this function clears the adjacent cells if the cell the user clicks is empty """
         for row, col in to_reveal:
-            button = self.buttons[row][col]
+            button = self.buttons[row + 1][col + 1]
             cell = self.logic.board[row][col]
-
-            button.config(relief=tk.SUNKEN, state=tk.DISABLED)
-
-            if cell.get_type() == 'empty':
-                # Update button for an empty cell
-                # You can configure it to have a different appearance if needed
-                pass
-            elif cell.get_type().isdigit():
-                # Update button for a cell with adjacent mines
-                color = config.MINE_COLORMAP.get(cell.get_type())
-                button.config(text=cell.get_type(), bg=color, fg='white')
+            self._configure_button(button, cell)
     
     def on_right_click(self, row, column):
         """Handles left click for revealing the tile."""
         def callback(event):
+            logic_row, logic_column  = row - 1, column
+            
             button = event.widget
+            cell = self.logic.board[logic_row][logic_column]
             if button.cget('relief') == tk.SUNKEN:
                 return callback 
             else:
-                action = self.logic.toggle_flag(row, column)
-                if action == 'setflag':
-                    button.config(image=self.flag_image, width=config.button_width, height=config.button_height )
-                elif action == 'unset_flag':
-                    button.config(relief=tk.RAISED)
-                    button.config(image=self.flag_image, width=config.button_width, height=config.button_height)
-                    button.config(image='')
-                else:
-                    pass
+                action = self.logic.toggle_flag(logic_row, logic_column)
+                self._configure_button(button, cell, action)
+
         return callback
 
     def load_image(self, master):
@@ -192,18 +181,18 @@ class MinesweeperGUI:
 
         self.score_label = tk.Label(master, text="Score: 0")
         self.score_label.grid(row=0, column=size//2, columnspan=size//2, sticky="e")
-        if not self.running:
+        if not self.logic.running:
             self.start_time = time.time()
-            self.running = True
+            self.logic.running = True
             self.update_timer()
 
     def update_timer(self):
-        if self.running:
+        if self.logic.running:
             elapsed_time = int(time.time() - self.start_time)
             self.timer_label.config(text=f"Time: {elapsed_time}s")
             self.master.after(1000, self.update_timer)
     
     def update_score(self):
-        if self.running:
+        if self.logic.running:
             self.score = self.logic.score
             self.score_label.config(text=f"Score: {self.score}")

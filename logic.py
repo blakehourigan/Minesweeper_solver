@@ -10,8 +10,8 @@ class MinesweeperLogic:
         self.grid_size = grid_size
         self.board = [[Cell() for _ in range(grid_size)] for _ in range(grid_size)]
         self.num_moves = 0
-        
         self.score = 0
+        self.running = False
 
     def reveal_cell(self, row, column):
         """Logic to reveal a cell; returns what's in the cell (mine, number, or empty)"""
@@ -34,6 +34,7 @@ class MinesweeperLogic:
         cell = self.board[row][column]
 
         if (not cell.is_revealed) and not cell.is_flagged:
+            print(row,column, "is now flagged\n")
             cell.is_flagged = True
             return 'setflag'
         elif (not cell.is_revealed) and cell.is_flagged:

@@ -29,7 +29,8 @@ MINE_COLORMAP = {
     '4' : 'navy',
     '5' : 'orange red',
     'empty' : 'white',
-    'mine' : 'grey'
+    'mine' : 'grey',
+    'flag' : 'white'
 }
 
 # gui related configuration

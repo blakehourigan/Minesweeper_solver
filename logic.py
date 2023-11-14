@@ -13,6 +13,25 @@ class MinesweeperLogic:
         
         self.score = 0
 
+    def print_board(self):
+        print("Minesweeper Board:")
+        for row in self.board:
+            row_str = ''
+            for cell in row:
+                celltype = (cell).get_type()
+                if celltype == 'mine':
+                    row_str += 'M '  # Mine
+                elif cell.adjacent_mines > 0:
+                    row_str += f'{cell.adjacent_mines} '  # Number of adjacent mines
+                else:
+                    row_str += 'E '  # Empty cell
+            print(row_str)
+        print()  # Newline for readability
+
+    def initialize_mines(self):
+        self.place_mines()
+        self.fill_remaining_board()
+    
     def reveal_cell(self, row, column):
         """Logic to reveal a cell; returns what's in the cell (mine, number, or empty)"""
         cell = self.board[row][column]
@@ -88,7 +107,7 @@ class MinesweeperLogic:
                             # Add the cell to be revealed if it is not a mine and not already revealed
                             if not self.board[neighbor_row][neighbor_col].is_mine:
                                 to_reveal.add((neighbor_row, neighbor_col))
-            return to_reveal
+        return to_reveal
 
     
     def count_adjacents(self, row, col):

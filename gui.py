@@ -83,18 +83,22 @@ class MinesweeperGUI:
             if result == 'empty':
                 to_reveal = self.logic.clear_adjacents(logic_row, logic_column)
                 self.clear_adjacents(to_reveal)
+                self.master.update()
             elif result == 'mine':
-                # Configure button image properties here
+                # configure button image properties
                 button.config(image=self.mine_image, width=config.button_width, height=config.button_height)
                 self.running = False
+                # reveal and show the board to the player
                 self.reveal_board()
-                time.sleep(5)  # Consider if this delay is necessary or optimal
+                time.sleep(5)
+                
                 self.loss_window()
             elif str(result).isdigit() and result != '0':
                 color = config.MINE_COLORMAP.get(result)
                 button.config(text=result, bg=color, fg='white', width=config.button_width, height=config.button_height)
             else:
                 pass
+            self.update_score()
         return callback
     
     def reveal_board(self):
@@ -198,3 +202,8 @@ class MinesweeperGUI:
             elapsed_time = int(time.time() - self.start_time)
             self.timer_label.config(text=f"Time: {elapsed_time}s")
             self.master.after(1000, self.update_timer)
+    
+    def update_score(self):
+        if self.running:
+            self.score = self.logic.score
+            self.score_label.config(text=f"Score: {self.score}")

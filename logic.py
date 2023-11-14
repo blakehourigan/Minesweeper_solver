@@ -18,11 +18,14 @@ class MinesweeperLogic:
         cell = self.board[row][column]
         if self.num_moves == 0:
             cell_type = 'empty'
+            self.score += 1
             self.place_mines()
             self.fill_remaining_board()
             self.num_moves += 1
         else:
             cell_type = (cell).get_type()
+            if cell_type != 'mine':
+                self.score += 1
             self.num_moves +=1
         return cell_type
 

@@ -73,7 +73,7 @@ class MinesweeperLogic:
         """ function that checks if adjacent cells are empty, and if so it clears them"""
         to_reveal = set()
         to_reveal.add((row, col))
-        print(row, col)
+
         while to_reveal:
             current_row, current_col = to_reveal.pop()
             cell = self.board[current_row][current_col]
@@ -87,10 +87,9 @@ class MinesweeperLogic:
                 # Check if the neighbor is within the bounds of the board
                 if 0 <= neighbor_row < len(self.board) and 0 <= neighbor_col < len(self.board[0]):
                     # Add the cell to be revealed if it is not a mine and not already revealed
-                    print(self.board[neighbor_row][neighbor_col].get_type())
                     if self.board[neighbor_row][neighbor_col].get_type() != 'mine':
                         to_reveal.add((neighbor_row, neighbor_col))
-            print(to_reveal)
+
             return to_reveal
 
     

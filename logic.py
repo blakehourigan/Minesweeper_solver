@@ -51,8 +51,10 @@ class MinesweeperLogic:
             row = random.randint(0, self.grid_size - 1)
             column = random.randint(0, self.grid_size - 1)
 
-            # Check if the chosen cell already has a mine
-            if not self.board[row][column].is_mine:
+            cell = self.board[row][column]
+            
+            # Place mines in any cell other than the inital one
+            if cell.get_type() == 'blank':
                 self.board[row][column].set_type("mine")
                 mines_placed += 1
     

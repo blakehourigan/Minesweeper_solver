@@ -71,26 +71,39 @@ class MinesweeperLogic:
 
     def clear_adjacents(self, row, col): 
         """ function that checks if adjacent cells are empty, and if so it clears them"""
-        to_reveal = set()
+        to_reveal = set()       # this set is used keep track of if cells are found that need to be revealed locally
         to_reveal.add((row, col))
+
+        revealed_cells = set()  # Set to keep track of all the cells that need to be revealed globally on all iterations 
 
         while to_reveal:
             current_row, current_col = to_reveal.pop()
-            cell = self.board[current_row][current_col]
-            cell.is_revealed = True
-            neighbor_positions = [(-1, -1), (-1, 0), (-1, 1),  # Above row
-                                (0, -1),           (0, 1),    # Same row
-                                (1, -1), (1, 0), (1, 1)]     # Below row
+            curr_cell = self.board[current_row][current_col]
 
-            for row_offset, col_offset in neighbor_positions:
-                neighbor_row, neighbor_col = current_row + row_offset, current_col + col_offset
-                # Check if the neighbor is within the bounds of the board
-                if 0 <= neighbor_row < len(self.board) and 0 <= neighbor_col < len(self.board[0]):
-                    # Add the cell to be revealed if it is not a mine and not already revealed
-                    if self.board[neighbor_row][neighbor_col].get_type() != 'mine':
-                        to_reveal.add((neighbor_row, neighbor_col))
+            # If the cell is already revealed or is a mine, skip it
+            if (current_row, current_col) in revealed_cells or self.board[current_row][current_col].get_type() == 'mine':
+                continue
 
-            return to_reveal
+            revealed_cells.add((current_row, current_col))
+            curr_cell.is_revealed = True
+
+            # If the current cell is empty, add its neighbors to the set
+            if curr_cell.get_type() == 'empty':
+                neighbor_positions = [(-1, -1), (-1, 0), (-1, 1),  # adjacent above row
+                                    (0, -1),           (0, 1),    # adjacent same row
+                                    (1, -1), (1, 0), (1, 1)]     # adjacent below row
+
+                for row_offset, col_offset in neighbor_positions:
+                    neighbor_row, neighbor_col = current_row + row_offset, current_col + col_offset
+                    # Check if the neighbor is within the bounds of the board
+                    if 0 <= neighbor_row < len(self.board) and 0 <= neighbor_col < len(self.board[0]):
+                        neighbor_cell = self.board[neighbor_row][neighbor_col]
+                        # Add the cell to be revealed if it is not a mine and not already revealed
+                        if neighbor_cell.get_type() != 'mine' and not neighbor_cell.is_revealed:
+                            to_reveal.add((neighbor_row, neighbor_col))
+
+        return revealed_cells
+
 
     
     def count_adjacents(self, row, col):

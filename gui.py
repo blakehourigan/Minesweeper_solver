@@ -67,18 +67,21 @@ class MinesweeperGUI:
     def on_left_click(self, row, column):
         """Handles left click for revealing the tile."""
         def callback(event):
-            result = self.logic.reveal_cell(row, column)
+            # we need to adjust everything down by one, because an extra row is generated to house the timer and score labels
+            logic_row, logic_column  = row - 1, column - 1 
+            
+            result = self.logic.reveal_cell(logic_row, logic_column)
             button = event.widget
             button.config(relief=tk.SUNKEN, state=tk.DISABLED)
             
-            cell = self.logic.board[row][column]
+            cell = self.logic.board[logic_row][logic_column]
             cell.is_revealed = True
             # check for a win
             if self.logic.check_for_win():
                 self.win_window()
             # else, keep playing
             if result == 'empty':
-                to_reveal = self.logic.clear_adjacents(row, column)
+                to_reveal = self.logic.clear_adjacents(logic_row, logic_column)
                 self.clear_adjacents(to_reveal)
             elif result == 'mine':
                 # Configure button image properties here
@@ -95,16 +98,19 @@ class MinesweeperGUI:
         return callback
     
     def reveal_board(self):
+        """ function to reveal the whole board once you have lost the game """
         for row_index, row_entries in enumerate(self.logic.board):
             for col_index, cell in enumerate(row_entries):
                 self._update_button_if_not_revealed(row_index, col_index, cell)
 
     def _update_button_if_not_revealed(self, row_index, col_index, cell):
+        """ helper function to reveal a cell if it has not already been reveleaded before """
         if not cell.is_revealed:
             button = self.buttons[row_index][col_index]
             self._configure_button(button, cell)
 
     def _configure_button(self, button, cell):
+        """ helper function to configure the button to color the cell based on cell type """
         cell_type = cell.get_type()
         color = config.MINE_COLORMAP.get(cell_type)
         button.config(relief=tk.SUNKEN, state=tk.DISABLED, bg=color)

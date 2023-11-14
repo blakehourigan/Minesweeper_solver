@@ -68,10 +68,11 @@ class MinesweeperGUI:
             
             result = self.logic.reveal_cell(logic_row, logic_column)
             button = event.widget
-            button.config(relief=tk.SUNKEN, state=tk.DISABLED)
-            
+
             cell = self.logic.board[logic_row][logic_column]
             cell.is_revealed = True
+            
+            self._configure_button(button, cell)
             # check for a win
             if self.logic.check_for_win():
                 self.win_window()
@@ -79,20 +80,18 @@ class MinesweeperGUI:
             if result == 'empty':
                 to_reveal = self.logic.clear_adjacents(logic_row, logic_column)
                 self.clear_adjacents(to_reveal)
-                self.master.update()
             elif result == 'mine':
-                # configure button image properties
-                self._configure_button(button, cell)
                 self.logic.running = False
-                # reveal and show the board to the player
+                # reveal the board to the player for 5s
                 self.reveal_board()
                 time.sleep(5)
                 
                 self.loss_window()
-            elif str(result).isdigit() and result != '0':
+            elif cell.is_numbered():
                 self._configure_button(button, cell)
             else:
-                pass
+                print("Error: cell type not allowed")
+                exit(1)
             self.update_score()
         return callback
     

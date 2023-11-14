@@ -34,14 +34,14 @@ class MinesweeperLogic:
         cell = self.board[row][column]
 
         if (not cell.is_revealed) and not cell.is_flagged:
-            print(row,column, "is now flagged\n")
             cell.is_flagged = True
             return 'setflag'
         elif (not cell.is_revealed) and cell.is_flagged:
             cell.is_flagged = False
             return 'unset_flag'
         else:
-            pass
+            print('Unexpected error, please reload program and play again')
+            exit(1)
         
     def place_mines(self):
         """ this function places mines on the board """
@@ -101,7 +101,7 @@ class MinesweeperLogic:
                         # Add the cell to be revealed if it is not a mine and not already revealed
                         if neighbor_cell.get_type() != 'mine' and not neighbor_cell.is_revealed:
                             to_reveal.add((neighbor_row, neighbor_col))
-
+        self.score += len(revealed_cells)
         return revealed_cells
 
 

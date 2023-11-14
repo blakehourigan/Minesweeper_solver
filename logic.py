@@ -73,25 +73,24 @@ class MinesweeperLogic:
         """ function that checks if adjacent cells are empty, and if so it clears them"""
         to_reveal = set()
         to_reveal.add((row, col))
-
+        print(row, col)
         while to_reveal:
             current_row, current_col = to_reveal.pop()
+            cell = self.board[current_row][current_col]
+            cell.is_revealed = True
+            neighbor_positions = [(-1, -1), (-1, 0), (-1, 1),  # Above row
+                                (0, -1),           (0, 1),    # Same row
+                                (1, -1), (1, 0), (1, 1)]     # Below row
 
-            if not self.board[current_row][current_col].is_revealed:
-                self.board[current_row][current_col].is_revealed = True
-
-                if self.board[current_row][current_col].get_type() == 'empty':
-                    neighbor_positions = [(-1, -1), (-1, 0), (-1, 1),  # Above row
-                                        (0, -1),           (0, 1),    # Same row
-                                        (1, -1), (1, 0), (1, 1)]     # Below row
-
-                    for row_offset, col_offset in neighbor_positions:
-                        neighbor_row, neighbor_col = current_row + row_offset, current_col + col_offset
-                        # Check if the neighbor is within the bounds of the board
-                        if 0 <= neighbor_row < len(self.board) and 0 <= neighbor_col < len(self.board[0]):
-                            # Add the cell to be revealed if it is not a mine and not already revealed
-                            if not self.board[neighbor_row][neighbor_col].is_mine:
-                                to_reveal.add((neighbor_row, neighbor_col))
+            for row_offset, col_offset in neighbor_positions:
+                neighbor_row, neighbor_col = current_row + row_offset, current_col + col_offset
+                # Check if the neighbor is within the bounds of the board
+                if 0 <= neighbor_row < len(self.board) and 0 <= neighbor_col < len(self.board[0]):
+                    # Add the cell to be revealed if it is not a mine and not already revealed
+                    print(self.board[neighbor_row][neighbor_col].get_type())
+                    if self.board[neighbor_row][neighbor_col].get_type() != 'mine':
+                        to_reveal.add((neighbor_row, neighbor_col))
+            print(to_reveal)
             return to_reveal
 
     

@@ -131,7 +131,7 @@ class MinesweeperGUI:
     def clear_adjacents(self, to_reveal):
         """ this function clears the adjacent cells if the cell the user clicks is empty """
         for row, col in to_reveal:
-            button = self.buttons[row + 1][col + 1]
+            button = self.buttons[row][col]
             cell = self.logic.board[row][col]
             self._configure_button(button, cell)
     

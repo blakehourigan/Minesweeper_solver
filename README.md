@@ -57,7 +57,9 @@ xlrd==2.0.1
 
 ## Authors and Acknowledgment
 - Blake Hourigan - Initial work
-- Collaborators... 
+- Adam Van Zant - Genetic Algorithm 
+- Robert Walden
+- Bricker - Genetic Algorithm 
 
 ## License
 dadaddadad

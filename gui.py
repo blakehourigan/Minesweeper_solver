@@ -108,7 +108,14 @@ class MinesweeperGUI:
         cell_type = cell.get_type()
         color = config.MINE_COLORMAP.get(cell_type)
         button.config(relief=tk.SUNKEN, state=tk.DISABLED, bg=color)
+        self.map_type_to_content(cell, button)
         self.master.update()
+        
+    def map_type_to_content(self, cell, button):
+        if cell.type == 'mine':
+            button.config(image=self.mine_image)
+        elif cell.type != 'empty':
+            button.config(text=cell.type)
         
     def clear_adjacents(self, to_reveal):
         for row, col in to_reveal:

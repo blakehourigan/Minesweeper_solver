@@ -17,17 +17,16 @@ class MinesweeperLogic:
         """Logic to reveal a cell; returns what's in the cell (mine, number, or empty)"""
         cell = self.board[row][column]
         if self.num_moves == 0:
-            cell_type = 'empty'
+            cell.set_type('empty')
             self.score += 1
             self.place_mines()
             self.fill_remaining_board()
             self.num_moves += 1
-        else:
-            cell_type = (cell).get_type()
-            if cell_type != 'mine':
-                self.score += 1
+        if cell.get_type != 'mine' and self.num_moves > 0:
+            self.score += 1
             self.num_moves +=1
-        return cell_type
+        print(cell.get_type())
+        return cell.get_type()
 
     def toggle_flag(self, row, column):
         """ this function tells the gui to set a flag or unset flag based on user input and game state """
@@ -63,7 +62,7 @@ class MinesweeperLogic:
             for col, cell in enumerate(row):
                 if cell.get_type() == 'mine':
                     continue
-                elif self.count_adjacents(row_number, col) > 0:
+                elif self.count_adjacents(row_number, col) > 0 and cell.get_type() == 'blank':
                     cell.adjacent_mines = self.count_adjacents(row_number, col)
                     cell.set_type(str(cell.adjacent_mines))
                 else:

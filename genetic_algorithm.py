@@ -2,23 +2,23 @@ import random
 
 
 class Individual:
-    def __init__(self, size, mines):
-        # If size is an integer (square board), store it as a tuple (size, size)
-        if isinstance(size, int):
-            self.size = (size, size)
-        else:
-            self.size = size  # Assuming size is already a tuple
+    def __init__(self, size):
+        self.size = size  # Assuming size is already a tuple
         self.flags = set()  # Initialize flags
         self.initialize_random_flags()  # Call this method to place flags
+        self.population_size = 500
+        self.generations = 500
+        self.tournament_size = 20
+        self.mutation_rate = 0.3
 
 
     def initialize_random_flags(self):
         # Determine the number of flags to place
-        num_flags = random.randint(5, self.size[0])  # Use the first element of the tuple for row size
+        num_flags = random.randint(5, self.size)  # Use the first element of the tuple for row size
 
         while len(self.flags) < num_flags:
-            row = random.randint(0, self.size[0] - 1)
-            col = random.randint(0, self.size[1] - 1)
+            row = random.randint(0, self.size - 1)
+            col = random.randint(0, self.size -1)
             self.flags.add((row, col))
 
     def __str__(self):
@@ -50,7 +50,7 @@ class Individual:
         print()
     """
     
-    def calculate_fitness(self,individual, minesweeper_logic):
+    def calculate_fitness(self,individual, board):
         """
         Calculate the fitness of an individual based on the Minesweeper board.
 
@@ -63,7 +63,7 @@ class Individual:
 
         for row in range(self.size):
             for col in range(self.size):
-                cell = minesweeper_logic.board[row][col]
+                cell = board[row][col]
                 celltype = (cell).get_type()
                 if celltype == "mine" and (row, col) in individual.flags:
                     correct_flags += 1
@@ -80,7 +80,7 @@ class Individual:
         :param individual: The individual to be mutated.
         :param mutation_rate: The fraction of flags to be redistributed.
         """
-        rows, cols = individual.size
+        rows, cols = self.size, self.size
         num_flags_to_mutate = int(len(individual.flags) * mutation_rate)
 
         # Convert the set of flags to a list for random sampling
@@ -171,9 +171,9 @@ class Individual:
         return aggregated_individual
 
 
-    def genetic_algorithm(self, selfminesweeper_logic, population_size, generations, tournament_size, mutation_rate):
+    def genetic_algorithm(self, board):
         # Initialize the population
-        population = [Individual(self.size) for _ in range(population_size)]
+        population = [Individual(self.size) for _ in range(self.population_size)]
 
         """
         for i, individual in enumerate(population):
@@ -186,25 +186,25 @@ class Individual:
         
         # Evaluate the initial population
         for individual in population:
-            individual.fitness = self.calculate_fitness(individual, self.minesweeper_logic)
+            individual.fitness = self.calculate_fitness(individual, board)
 
-        for generation in range(generations):
+        for generation in range(self.generations):
             # Selection
-            selected_individuals = self.tournament_selection(population, tournament_size)
+            selected_individuals = self.tournament_selection(population, self.tournament_size)
 
             # Crossover and Mutation
             next_generation = []
-            while len(next_generation) < population_size:
+            while len(next_generation) < self.population_size:
                 parent1, parent2 = random.sample(selected_individuals, 2)
                 offspring1, offspring2 = self.crossover(parent1, parent2)
-                next_generation.extend([self.mutate(offspring1, mutation_rate), self.mutate(offspring2, mutation_rate)])
+                next_generation.extend([self.mutate(offspring1, self.mutation_rate), self.mutate(offspring2, self.mutation_rate)])
 
             # Evaluate the new generation
             for individual in next_generation:
-                individual.fitness = self.calculate_fitness(individual, self.minesweeper_logic)
+                individual.fitness = self.calculate_fitness(individual, board)
                 
             aggregated_individual = self.aggregate_wisdom_of_crowds(population)
-            aggregated_individual.fitness = self.calculate_fitness(aggregated_individual, self.minesweeper_logic)
+            aggregated_individual.fitness = self.calculate_fitness(aggregated_individual, board)
             population[-1] = aggregated_individual  # Replace the least fit individual
 
             # Replace the old population with the new generation
@@ -234,10 +234,7 @@ print("Initial Board State:")
 minesweeper_logic.print_board()
 
 # GA parameters
-population_size = 500
-generations = 500
-tournament_size = 20
-mutation_rate = 0.3
+
 
 # Running the genetic algorithm
 best_solution = genetic_algorithm(minesweeper_logic, population_size, generations, tournament_size, mutation_rate)

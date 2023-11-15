@@ -28,28 +28,9 @@ class MinesweeperLogic:
             print(row_str)
         print()  # Newline for readability
 
-    def initialize_mines(self):
-        self.place_mines()
-        self.fill_remaining_board()
-
-    def print_board(self):
-        print("Minesweeper Board:")
-        for row in self.board:
-            row_str = ''
-            for cell in row:
-                celltype = (cell).get_type()
-                if celltype == 'mine':
-                    row_str += 'M '  # Mine
-                elif cell.adjacent_mines > 0:
-                    row_str += f'{cell.adjacent_mines} '  # Number of adjacent mines
-                else:
-                    row_str += 'E '  # Empty cell
-            print(row_str)
-        print()  # Newline for readability
-
-    def initialize_mines(self):
-        self.place_mines()
-        self.fill_remaining_board()
+    def initialize_board_AI(self):
+        row, col = random.randint(0,8), random.randint(0,8) 
+        self.reveal_cell(row, col)
     
     def reveal_cell(self, row, column):
         """Logic to reveal a cell; returns what's in the cell (mine, number, or empty)"""

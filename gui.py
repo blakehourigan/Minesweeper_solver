@@ -15,7 +15,7 @@ class MinesweeperGUI:
         self.AI = AI
         
         self.player = player
-        
+
         self.setup_timer(self.master, size)
     
         self.load_image(self.master)
@@ -36,6 +36,12 @@ class MinesweeperGUI:
 
         # Center the window
         self.center_window(window_width, window_height)
+        
+        if player == "AI":
+            self.logic.initialize_board_AI()
+            self.AI.genetic_algorithm(self.logic.board)
+            self.reveal_board()
+            time.sleep(10)
 
     def create_button(self, master, row, column, width, height, size):
         # Create a frame to hold the button

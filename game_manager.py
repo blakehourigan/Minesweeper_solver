@@ -25,7 +25,7 @@ class GameManager:
         self.clear_screen()
         logic = MinesweeperLogic(**settings)  # Create an instance of the logic class to use here 
         AI = Individual(**settings)           # Create an instance of our genetic algorithm
-        self.current_screen = MinesweeperGUI(self.root, **settings, player=player, loss_window=self.show_end_screen, win_window=self.show_win_screen, logic=logic)
+        self.current_screen = MinesweeperGUI(self.root, **settings, player=player, loss_window=self.show_end_screen, win_window=self.show_win_screen, logic=logic, AI=AI)
 
     def show_win_screen(self):
         """ clear the gui and show the winner splash scree """

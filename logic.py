@@ -7,7 +7,6 @@ class MinesweeperLogic:
     def __init__(self, size, mines):
         # initializing logic variables
         self.num_mines = mines
-        print(size,mines)
         self.grid_size = size
         self.board = [[Cell() for _ in range(self.grid_size)] for _ in range(self.grid_size)]
         self.num_moves = 0

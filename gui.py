@@ -2,8 +2,6 @@
 import tkinter as tk
 import time
 
-from genetic_algorithm import Individual
-from logic import MinesweeperLogic
 import config
 
 class MinesweeperGUI:

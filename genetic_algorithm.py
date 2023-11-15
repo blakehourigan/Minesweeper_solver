@@ -1,27 +1,24 @@
 import random
 
-from logic import MinesweeperLogic
-import config
-
 
 class Individual:
-    def __init__(self, board_size, mines):
-        # If board_size is an integer (square board), store it as a tuple (board_size, board_size)
-        if isinstance(board_size, int):
-            self.board_size = (board_size, board_size)
+    def __init__(self, size, mines):
+        # If size is an integer (square board), store it as a tuple (size, size)
+        if isinstance(size, int):
+            self.size = (size, size)
         else:
-            self.board_size = board_size  # Assuming board_size is already a tuple
+            self.size = size  # Assuming size is already a tuple
         self.flags = set()  # Initialize flags
         self.initialize_random_flags()  # Call this method to place flags
 
 
     def initialize_random_flags(self):
         # Determine the number of flags to place
-        num_flags = random.randint(5, self.board_size[0])  # Use the first element of the tuple for row size
+        num_flags = random.randint(5, self.size[0])  # Use the first element of the tuple for row size
 
         while len(self.flags) < num_flags:
-            row = random.randint(0, self.board_size[0] - 1)
-            col = random.randint(0, self.board_size[1] - 1)
+            row = random.randint(0, self.size[0] - 1)
+            col = random.randint(0, self.size[1] - 1)
             self.flags.add((row, col))
 
     def __str__(self):
@@ -31,9 +28,11 @@ class Individual:
         return f"Flags: {self.flags}"
 
 
+
+"""
 def print_board_with_flags(minesweeper_logic, individual):
     print("Minesweeper Board with Flags:")
-    for row in range(minesweeper_logic.grid_size):
+    for row in range():
         row_str = ''
         for col in range(minesweeper_logic.grid_size):
             cell = minesweeper_logic.board[row][col]
@@ -49,6 +48,7 @@ def print_board_with_flags(minesweeper_logic, individual):
                 row_str += 'E '  # Empty cell
         print(row_str)
     print()
+ """
  
 def calculate_fitness(individual, minesweeper_logic):
     """
@@ -80,7 +80,7 @@ def mutate(individual, mutation_rate):
     :param individual: The individual to be mutated.
     :param mutation_rate: The fraction of flags to be redistributed.
     """
-    rows, cols = individual.board_size
+    rows, cols = individual.size
     num_flags_to_mutate = int(len(individual.flags) * mutation_rate)
 
     # Convert the set of flags to a list for random sampling
@@ -110,9 +110,9 @@ def mutate(individual, mutation_rate):
 
 def crossover(parent1, parent2):
     # Create deep copies of the parent individuals to become the offspring
-    offspring1 = Individual(parent1.board_size)
+    offspring1 = Individual(parent1.size)
     offspring1.flags = parent1.flags.copy()
-    offspring2 = Individual(parent2.board_size)
+    offspring2 = Individual(parent2.size)
     offspring2.flags = parent2.flags.copy()
 
     # Ensure there are flags to swap
@@ -136,8 +136,6 @@ def crossover(parent1, parent2):
         offspring2.flags.update(flags_to_swap1)
 
     return offspring1, offspring2
-
-
 
 def tournament_selection(population, tournament_size):
     """
@@ -167,7 +165,7 @@ def aggregate_wisdom_of_crowds(population):
         aggregated_flags.update(individual.flags)
 
     # Create a new individual with aggregated flags
-    aggregated_individual = Individual(population[0].board_size)
+    aggregated_individual = Individual(population[0].size)
     aggregated_individual.flags = aggregated_flags
     
     return aggregated_individual

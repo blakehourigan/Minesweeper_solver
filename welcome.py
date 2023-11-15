@@ -50,7 +50,8 @@ class WelcomeScreen:
 
     def on_start_game(self):
         difficulty = self.difficulty.get()
-        self.start_game_callback(difficulty)  # Call the callback with the selected difficulty
+        player = self.player.get()
+        self.start_game_callback(difficulty, player)  # Call the callback with the selected difficulty
 
     def update_color(self, *args):
         """ update the color of the buttons based on current selections """
@@ -83,8 +84,6 @@ class WelcomeScreen:
         elif player == "AI":
             return "red"
         return "white"
-
-    
     
     def center_window(self, width, height):
         # Get screen width and height

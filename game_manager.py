@@ -18,12 +18,11 @@ class GameManager:
         self.current_screen = welcome_class(self.root, self.start_game)
         self.root.mainloop()
 
-    def start_game(self, difficulty):
+    def start_game(self, difficulty, player):
         settings = config.DIFFICULTIES.get(difficulty, config.DIFFICULTIES["Beginner"])
-        AI_Player = Individual(**settings)
         # Clear any existing screen and start the game
         self.clear_screen()
-        self.current_screen = MinesweeperGUI(self.root, **settings, loss_window=self.show_end_screen, win_window=self.show_win_screen)
+        self.current_screen = MinesweeperGUI(self.root, **settings, player=player, loss_window=self.show_end_screen, win_window=self.show_win_screen)
 
     def show_win_screen(self):
         """ clear the gui and show the winner splash scree """

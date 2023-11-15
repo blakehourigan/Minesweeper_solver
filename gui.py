@@ -7,14 +7,14 @@ from logic import MinesweeperLogic
 import config
 
 class MinesweeperGUI:
-    def __init__(self, master, size, mines, player, loss_window, win_window):
+    def __init__(self, master, size, mines, player, loss_window, win_window, logic, AI):
         self.master = master
         master.title("Minesweeper")
         self.loss_window = loss_window
         self.win_window = win_window
         
-        self.AI = Individual(size, mines)           # Create an instance of our genetic algorithm
-        self.logic = MinesweeperLogic(size, mines)  # Create an instance of the logic class to use here 
+        self.logic = logic
+        self.AI = AI
         
         self.player = player
         

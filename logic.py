@@ -4,11 +4,12 @@ import random
 from cell import Cell
 
 class MinesweeperLogic:
-    def __init__(self, grid_size, num_mines):
+    def __init__(self, size, mines):
         # initializing logic variables
-        self.num_mines = num_mines
-        self.grid_size = grid_size
-        self.board = [[Cell() for _ in range(grid_size)] for _ in range(grid_size)]
+        self.num_mines = mines
+        print(size,mines)
+        self.grid_size = size
+        self.board = [[Cell() for _ in range(self.grid_size)] for _ in range(self.grid_size)]
         self.num_moves = 0
         self.score = 0
         self.running = False

@@ -18,9 +18,9 @@ class MinesweeperLogic:
         cell = self.board[row][column]
         if self.num_moves == 0:
             cell.set_type('empty')
-            self.score += 1
             self.place_mines()
             self.fill_remaining_board()
+            self.score += 1
             self.num_moves += 1
         if cell.get_type != 'mine' and self.num_moves > 0:
             self.score += 1
@@ -54,7 +54,8 @@ class MinesweeperLogic:
             
             # Place mines in any cell other than the inital one
             if cell.get_type() == 'blank':
-                self.board[row][column].set_type("mine")
+                cell.set_type("mine")
+                cell.is_mine = True
                 mines_placed += 1
     
     def fill_remaining_board(self):
@@ -99,7 +100,7 @@ class MinesweeperLogic:
                     if 0 <= neighbor_row < len(self.board) and 0 <= neighbor_col < len(self.board[0]):
                         neighbor_cell = self.board[neighbor_row][neighbor_col]
                         # Add the cell to be revealed if it is not a mine and not already revealed
-                        if neighbor_cell.get_type() != 'mine' and not neighbor_cell.is_revealed:
+                        if not neighbor_cell.is_mine and not neighbor_cell.is_revealed:
                             to_reveal.add((neighbor_row, neighbor_col))
         self.score += len(revealed_cells)
         return revealed_cells

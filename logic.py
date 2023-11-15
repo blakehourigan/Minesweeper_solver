@@ -25,7 +25,6 @@ class MinesweeperLogic:
         if cell.get_type != 'mine' and self.num_moves > 0:
             self.score += 1
             self.num_moves +=1
-        print(cell.get_type())
         return cell.get_type()
 
     def toggle_flag(self, row, column):
@@ -105,8 +104,6 @@ class MinesweeperLogic:
         self.score += len(revealed_cells)
         return revealed_cells
 
-
-    
     def count_adjacents(self, row, col):
         """ function that checks the adjacent cells for mines if they exist """
         neighbor_positions = [(-1, -1), (-1, 0), (-1, 1),  # Above row

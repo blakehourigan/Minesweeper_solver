@@ -20,7 +20,7 @@ class MinesweeperGUI:
         self.setup_grid(self.master, size)
 
         # Initialize a grid of buttons with frames
-        self.buttons = [[self.create_button(master, row + 1, column, config.button_width, config.button_height, size)
+        self.buttons = [[self.create_button(master, row, column, config.button_width, config.button_height, size)
                         for column in range(size)] for row in range(size)]
 
         # Disable window resizing
@@ -37,7 +37,7 @@ class MinesweeperGUI:
     def create_button(self, master, row, column, width, height, size):
         # Create a frame to hold the button
         frame = tk.Frame(master)
-        frame.grid(row=row, column=column, padx=0, pady=0, sticky="nsew")  # Use sticky to fill the space
+        frame.grid(row=row + 1, column=column, padx=0, pady=0, sticky="nsew")  # Use sticky to fill the space
         
         # Create the button
         button = tk.Button(frame, width=config.button_width,height=config.button_height)

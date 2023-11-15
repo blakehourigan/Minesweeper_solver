@@ -193,5 +193,4 @@ class MinesweeperGUI:
     
     def update_score(self):
         if self.logic.running:
-            self.score = self.logic.score
-            self.score_label.config(text=f"Score: {self.score}")
+            self.score_label.config(text=f"Score: {self.logic.get_score}")

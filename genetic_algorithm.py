@@ -70,17 +70,10 @@ def calculate_fitness(individual, minesweeper_logic):
             elif not celltype == "mine" and (row, col) not in individual.flags:
                 correct_opens += 1
 
-<<<<<<< HEAD
     return correct_flags * 20 + correct_opens 
 
 
 def mutate(individual, mutation_rate):
-=======
-    return correct_flags * 100 + correct_opens 
-
-
-def mutate(individual, mutation_rate=0.3):
->>>>>>> fb17f95e5431672e4717ee71d862bf3194d2a582
     """
     Mutate an individual by randomly redistributing a percentage of its flags.
 
@@ -164,7 +157,6 @@ def tournament_selection(population, tournament_size):
     return selected_individuals
 
 
-<<<<<<< HEAD
 def aggregate_wisdom_of_crowds(population):
     # Select the best 5% of individuals
     top_individuals = sorted(population, key=lambda ind: ind.fitness, reverse=True)[:max(1, len(population) // 20)]
@@ -181,8 +173,6 @@ def aggregate_wisdom_of_crowds(population):
     return aggregated_individual
 
 
-=======
->>>>>>> fb17f95e5431672e4717ee71d862bf3194d2a582
 def genetic_algorithm(minesweeper_logic, population_size, generations, tournament_size, mutation_rate):
     # Initialize the population
     population = [Individual(minesweeper_logic.grid_size) for _ in range(population_size)]
@@ -214,13 +204,10 @@ def genetic_algorithm(minesweeper_logic, population_size, generations, tournamen
         # Evaluate the new generation
         for individual in next_generation:
             individual.fitness = calculate_fitness(individual, minesweeper_logic)
-<<<<<<< HEAD
             
         aggregated_individual = aggregate_wisdom_of_crowds(population)
         aggregated_individual.fitness = calculate_fitness(aggregated_individual, minesweeper_logic)
         population[-1] = aggregated_individual  # Replace the least fit individual
-=======
->>>>>>> fb17f95e5431672e4717ee71d862bf3194d2a582
 
         # Replace the old population with the new generation
         population = next_generation
@@ -248,13 +235,8 @@ print("Initial Board State:")
 minesweeper_logic.print_board()
 
 # GA parameters
-<<<<<<< HEAD
 population_size = 500
 generations = 500
-=======
-population_size = 250
-generations = 100
->>>>>>> fb17f95e5431672e4717ee71d862bf3194d2a582
 tournament_size = 20
 mutation_rate = 0.3
 

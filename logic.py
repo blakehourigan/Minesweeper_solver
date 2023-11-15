@@ -125,7 +125,6 @@ class MinesweeperLogic:
             revealed_cells.add((current_row, current_col))
             curr_cell.is_revealed = True
 
-<<<<<<< HEAD
             # If the current cell is empty, add its neighbors to the set
             if curr_cell.get_type() == 'empty':
                 neighbor_positions = [(-1, -1), (-1, 0), (-1, 1),  # adjacent above row
@@ -142,16 +141,6 @@ class MinesweeperLogic:
                             to_reveal.add((neighbor_row, neighbor_col))
         self.score += len(revealed_cells)
         return revealed_cells
-=======
-                    for row_offset, col_offset in neighbor_positions:
-                        neighbor_row, neighbor_col = current_row + row_offset, current_col + col_offset
-                        # Check if the neighbor is within the bounds of the board
-                        if 0 <= neighbor_row < len(self.board) and 0 <= neighbor_col < len(self.board[0]):
-                            # Add the cell to be revealed if it is not a mine and not already revealed
-                            if not self.board[neighbor_row][neighbor_col].is_mine:
-                                to_reveal.add((neighbor_row, neighbor_col))
-        return to_reveal
->>>>>>> fb17f95e5431672e4717ee71d862bf3194d2a582
 
     def count_adjacents(self, row, col):
         """ function that checks the adjacent cells for mines if they exist """

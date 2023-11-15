@@ -66,7 +66,7 @@ class MinesweeperLogic:
         total_mines = self.num_mines
         mines_placed = 0
 
-        while mines_placed <= total_mines:
+        while mines_placed < total_mines:
             row = random.randint(0, self.grid_size - 1)
             column = random.randint(0, self.grid_size - 1)
 

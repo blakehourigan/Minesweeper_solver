@@ -1,6 +1,7 @@
 # gui.py
 import tkinter as tk
 import time
+import threading
 
 import config
 
@@ -36,28 +37,26 @@ class MinesweeperGUI:
 
         # Center the window
         self.center_window(window_width, window_height)
-               
-
-   
-   
+    
         if player == "AI":
             self.logic.initialize_board_AI()
-            # Running the genetic algorithm
-            final_solutions = self.AI.run_multiple_ga_iterations(config.ITERATIONS, config.POPULATION_SIZE, config.GENERATIONS, config.TOURNAMENT_SIZE, \
-                config.MUTATION_RATE, config.CROSSOVER_RATE, self.logic.num_mines, config.ELITISM_COUNT)
+            ga_thread = threading.Thread(target=self.run_genetic_algorithm)
+            ga_thread.start()
+            self.reveal_board()
 
-            # Assuming final_solutions is a list of Individual objects
-            for i, solution in enumerate(final_solutions):
-                print(f"Solution {i+1}:")
-                print("Flags:", solution.flags)
-                print("Fitness:", solution.fitness)
-                self.AI.print_board_with_flags(solution)
-                print("\n")  # Newline for readability
-                self.reveal_board()
 
-        if player == "AI":
+    def run_genetic_algorithm(self):
+        final_solutions = self.AI.run_multiple_ga_iterations(
+            config.ITERATIONS, config.POPULATION_SIZE, config.GENERATIONS, 
+            config.TOURNAMENT_SIZE, config.MUTATION_RATE, config.CROSSOVER_RATE, 
+            self.logic.num_mines, config.ELITISM_COUNT)
 
-            self.logic.initialize_board_AI()
+        for i, solution in enumerate(final_solutions):
+            print(f"Solution {i+1}:")
+            print("Flags:", solution.flags)
+            print("Fitness:", solution.fitness)
+            self.AI.print_board_with_flags(solution)
+            print("\n")  # Newline for readability
 
 
 

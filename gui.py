@@ -2,17 +2,20 @@
 import tkinter as tk
 import time
 
-from logic import MinesweeperLogic
 import config
 
 class MinesweeperGUI:
-    def __init__(self, master, size, mines, loss_window, win_window):
+    def __init__(self, master, size, mines, player, loss_window, win_window, logic, AI):
         self.master = master
         master.title("Minesweeper")
         self.loss_window = loss_window
         self.win_window = win_window
-        self.logic = MinesweeperLogic(size, mines)  # Create an instance of the logic class to use here 
         
+        self.logic = logic
+        self.AI = AI
+        
+        self.player = player
+
         self.setup_timer(self.master, size)
     
         self.load_image(self.master)
@@ -33,6 +36,12 @@ class MinesweeperGUI:
 
         # Center the window
         self.center_window(window_width, window_height)
+        
+        if player == "AI":
+            self.logic.initialize_board_AI()
+            solution = self.AI.genetic_algorithm(self.logic.board)
+            self.reveal_board()
+            print(solution)
 
     def create_button(self, master, row, column, width, height, size):
         # Create a frame to hold the button
@@ -41,10 +50,12 @@ class MinesweeperGUI:
         
         # Create the button
         button = tk.Button(frame, width=config.button_width,height=config.button_height)
-        # left click selects a cell
-        button.bind('<Button-1>', lambda event, r=row, c=column: self.on_left_click(r, c)(event))
-        # right click bound to setting flags
-        button.bind('<Button-3>', lambda event, r=row, c=column: self.on_right_click(r, c)(event))
+        
+        if self.player != 'AI':
+            # left click selects a cell
+            button.bind('<Button-1>', lambda event, r=row, c=column: self.on_left_click(r, c)(event))
+            # right click bound to setting flags
+            button.bind('<Button-3>', lambda event, r=row, c=column: self.on_right_click(r, c)(event))
 
         button.pack(expand=True, fill='both')  # Button will fill the entire frame
 

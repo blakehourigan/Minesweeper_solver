@@ -4,11 +4,11 @@ import random
 from cell import Cell
 
 class MinesweeperLogic:
-    def __init__(self, grid_size, num_mines):
+    def __init__(self, size, mines):
         # initializing logic variables
-        self.num_mines = num_mines
-        self.grid_size = grid_size
-        self.board = [[Cell() for _ in range(grid_size)] for _ in range(grid_size)]
+        self.num_mines = mines
+        self.grid_size = size
+        self.board = [[Cell() for _ in range(self.grid_size)] for _ in range(self.grid_size)]
         self.num_moves = 0
         self.score = 0
         self.running = False
@@ -28,28 +28,9 @@ class MinesweeperLogic:
             print(row_str)
         print()  # Newline for readability
 
-    def initialize_mines(self):
-        self.place_mines()
-        self.fill_remaining_board()
-
-    def print_board(self):
-        print("Minesweeper Board:")
-        for row in self.board:
-            row_str = ''
-            for cell in row:
-                celltype = (cell).get_type()
-                if celltype == 'mine':
-                    row_str += 'M '  # Mine
-                elif cell.adjacent_mines > 0:
-                    row_str += f'{cell.adjacent_mines} '  # Number of adjacent mines
-                else:
-                    row_str += 'E '  # Empty cell
-            print(row_str)
-        print()  # Newline for readability
-
-    def initialize_mines(self):
-        self.place_mines()
-        self.fill_remaining_board()
+    def initialize_board_AI(self):
+        row, col = random.randint(0,8), random.randint(0,8) 
+        self.reveal_cell(row, col)
     
     def reveal_cell(self, row, column):
         """Logic to reveal a cell; returns what's in the cell (mine, number, or empty)"""
@@ -166,7 +147,7 @@ class MinesweeperLogic:
                 # if we find a cell that is not a mine and is not revealed yet, then we need to keep going
                 if not cell.type == 'mine' and not cell.is_revealed:
                     return False
-        self.score += (self.num_mines * 15) 
+        self.score += (self.num_mines * 20) 
         return True                    
     
     def get_score(self):

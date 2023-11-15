@@ -81,7 +81,11 @@ class Individual:
             fitness -= (total_flags - total_mines) * 15
 
         return fitness
+    
+    def maximum_fitness(self):
+        fitness = (self.num_mines * 50)  + ((self.grid_size ** 2) - self.num_mines)
 
+        return fitness
 
 
     def mutate(self,individual):

@@ -43,6 +43,7 @@ class MinesweeperGUI:
             ga_thread = threading.Thread(target=self.run_genetic_algorithm)
             ga_thread.start()
             self.reveal_board()
+            print("Max Possible Fitness",self.AI.maximum_fitness())
 
 
     def run_genetic_algorithm(self):

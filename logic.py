@@ -147,7 +147,7 @@ class MinesweeperLogic:
                 # if we find a cell that is not a mine and is not revealed yet, then we need to keep going
                 if not cell.type == 'mine' and not cell.is_revealed:
                     return False
-        self.score += (self.num_mines * 15) 
+        self.score += (self.num_mines * 20) 
         return True                    
     
     def get_score(self):

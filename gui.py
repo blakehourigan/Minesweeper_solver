@@ -39,9 +39,9 @@ class MinesweeperGUI:
         
         if player == "AI":
             self.logic.initialize_board_AI()
-            self.AI.genetic_algorithm(self.logic.board)
+            solution = self.AI.genetic_algorithm(self.logic.board)
             self.reveal_board()
-            time.sleep(10)
+            print(solution)
 
     def create_button(self, master, row, column, width, height, size):
         # Create a frame to hold the button

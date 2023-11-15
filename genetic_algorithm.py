@@ -27,18 +27,15 @@ class Individual:
         """
         return f"Flags: {self.flags}"
 
-
-
-    """
-    def print_board_with_flags(minesweeper_logic, individual):
+    def print_board_with_flags(self, board):
         print("Minesweeper Board with Flags:")
-        for row in range():
+        for row in range(self.size):
             row_str = ''
-            for col in range(size):
-                cell = minesweeper_logic.board[row][col]
+            for col in range(self.size):
+                cell = board[row][col]
                 celltype = cell.get_type()
 
-                if (row, col) in individual.flags:
+                if (row, col) in self.flags:
                     row_str += 'F '  # Flagged cell
                 elif celltype == 'mine':
                     row_str += 'M '  # Mine
@@ -48,8 +45,7 @@ class Individual:
                     row_str += 'E '  # Empty cell
             print(row_str)
         print()
-    """
-    
+
     def calculate_fitness(self,individual, board):
         """
         Calculate the fitness of an individual based on the Minesweeper board.
@@ -137,7 +133,7 @@ class Individual:
 
         return offspring1, offspring2
 
-    def tournament_selection(self,population, tournament_size):
+    def tournament_selection(self, population, tournament_size):
         """
         Select individuals from the population using tournament selection.
 

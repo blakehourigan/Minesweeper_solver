@@ -75,7 +75,6 @@ class MinesweeperGUI:
             self._configure_button(button, cell)
             # check for a win
             if self.logic.check_for_win():
-                self.logic.running = False  
                 self.win_window()
             # else, keep playing
             if result == 'empty':
@@ -194,4 +193,5 @@ class MinesweeperGUI:
     
     def update_score(self):
         if self.logic.running:
-            self.score_label.config(text=f"Score: {self.logic.get_score()}")
+            self.score = self.logic.score
+            self.score_label.config(text=f"Score: {self.score}")

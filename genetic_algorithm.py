@@ -1,69 +1,62 @@
 import random
 
+import config
+
+
 class Individual:
-    def __init__(self, size):
-        self.size = size  # settings size of the baord in both x,y directions to passed size param
-        self.num_mines = mines
+    def __init__(self, board, mines, size):
         self.flags = set()  # Initialize flags
-        self.population_size = 500
-        self.generations = 500
-        self.tournament_size = 20
-        self.mutation_rate = 0.3
-        
-        self.improvement = []
-        
+        self.board = board
+        self.num_mines = mines
+        self.grid_size = size
         self.initialize_random_flags()  # Call this method to place flags
+
 
     def initialize_random_flags(self):
         # Determine the number of flags to place
-        num_flags = random.randint(5, self.size)  # Use the first element of the tuple for row size
-
+        num_flags = self.num_mines  # Use the first element of the tuple for row size
         while len(self.flags) < num_flags:
-            row = random.randint(0, self.size - 1)
-            col = random.randint(0, self.size -1)
+            row = random.randint(0, self.grid_size - 1)
+            col = random.randint(0, self.grid_size - 1)
             self.flags.add((row, col))
 
     def __str__(self):
-        """
-        String representation of the individual's flagged positions.
-        """
         return f"Flags: {self.flags}"
 
-    def print_board_with_flags(self):
+
+    def print_board_with_flags(self, individual):
+        RED = '\033[91m'  # ANSI escape code for red
+        YELLOW = '\033[93m'  # ANSI escape code for yellow
+        RESET = '\033[0m'  # ANSI escape code to reset color
+
         print("Minesweeper Board with Flags:")
-        for row in range(self.size):
+        for row in range(self.grid_size):
             row_str = ''
-            for col in range(self.size):
+            for col in range(self.grid_size):
                 cell = self.board[row][col]
                 celltype = cell.get_type()
 
-                if (row, col) in self.flags:
-                    row_str += 'F '  # Flagged cell
+                if (row, col) in individual.flags:
+                    row_str += YELLOW + 'F ' + RESET  # Yellow Flagged cell
                 elif celltype == 'mine':
-                    row_str += 'M '  # Mine
+                    row_str += RED + 'M ' + RESET  # Red Mine
                 elif cell.adjacent_mines > 0:
                     row_str += f'{cell.adjacent_mines} '  # Adjacent mines
                 else:
                     row_str += 'E '  # Empty cell
             print(row_str)
         print()
-        
-    def calculate_fitness(self, individual):
-        """
-        Calculate the fitness of an individual based on the Minesweeper board.
 
-        :param individual: The individual to be evaluated.
-        :param minesweeper_board: The Minesweeper board (with bomb locations).
-        :return: The fitness score of the individual.
-        """
+
+    def calculate_fitness(self,individual):
         correct_flags = 0
         incorrect_flags = 0
         correct_opens = 0
         incorrect_opens = 0
-        
+        total_mines = self.num_mines
 
-        for row in range(self.size):
-            for col in range(self.size):
+        for row in range(self.grid_size):
+            for col in range(self.grid_size):
                 cell = self.board[row][col]
                 celltype = cell.get_type()
                 is_flagged = (row, col) in individual.flags
@@ -79,56 +72,90 @@ class Individual:
                     else:
                         correct_opens += 1
 
-        return correct_flags * 20 + correct_opens 
+        # Calculate fitness
+        fitness = (correct_flags * 50) - (incorrect_flags * 10) + correct_opens - (incorrect_opens * 5)
 
-    def mutate(self, individual, mutation_rate):
-        rows, cols = self.size, self.size
-        num_flags_to_mutate = int(len(individual.flags) * mutation_rate)
+        # Penalize solutions that over-flag
+        total_flags = len(individual.flags)
+        if total_flags > total_mines:
+            fitness -= (total_flags - total_mines) * 15
 
-        # Convert the set of flags to a list for random sampling
+        return fitness
+
+
+
+    def mutate(self,individual):
+        rows, cols = individual.grid_size, individual.grid_size
+        total_mines = self.num_mines
+
         flags_list = list(individual.flags)
-        flags_to_remove = random.sample(flags_list, min(num_flags_to_mutate, len(flags_list)))
 
-        individual.flags.difference_update(flags_to_remove)
+        # Remove a random number of flags
+        num_flags_to_remove = random.randint(1, len(flags_list) // 2)
+        flags_to_remove = random.sample(flags_list, num_flags_to_remove)
+        for flag in flags_to_remove:
+            individual.flags.discard(flag)
 
-        # Add new random flags until the total count is back to num_mines
-        while len(individual.flags) < self.num_mines:
-            new_row = random.randint(0, rows - 1)
-            new_col = random.randint(0, cols - 1)
-            individual.flags.add((new_row, new_col))
+        # Add new flags, prioritizing cells near numbers
+        potential_flags = []
+        for row in range(rows):
+            for col in range(cols):
+                cell = self.board[row][col]
+                if (row, col) not in individual.flags:
+                    # Check if the cell is adjacent to a number
+                    if self.is_adjacent_to_number(row, col):
+                        potential_flags.append((row, col))
 
-        return individual
+        # If there are not enough potential flags near numbers, consider all unflagged cells
+        if len(potential_flags) < num_flags_to_remove:
+            potential_flags.extend([(r, c) for r in range(rows) for c in range(cols) if (r, c) not in individual.flags and (r, c) not in potential_flags])
+
+        # Randomly add flags up to the limit of total mines
+        while len(individual.flags) < min(total_mines, len(individual.flags) + num_flags_to_remove):
+            new_flag = random.choice(potential_flags)
+            individual.flags.add(new_flag)
+            potential_flags.remove(new_flag)
+
+
+    def is_adjacent_to_number(self,row, col):
+        for r in range(max(0, row - 1), min(row + 2, self.grid_size)):
+            for c in range(max(0, col - 1), min(col + 2, self.grid_size)):
+                if self.board[r][c].get_type() != 'mine' and self.board[r][c].adjacent_mines > 0:
+                    return True
+        return False
 
 
     def crossover(self, parent1, parent2):
-        # Create offspring with a combined set of flags from both parents
-        offspring1 = Individual(parent1.size, self.num_mines)
-        offspring2 = Individual(parent2.size, self.num_mines)
+        # Create deep copies of the parent individuals to become the offspring
+        offspring1 = Individual(self.board, self.num_mines, self.grid_size)
+        offspring1.flags = parent1.flags.copy()
+        offspring2 = Individual(self.board, self.num_mines, self.grid_size)
+        offspring2.flags = parent2.flags.copy()
 
-        # Combine flags from both parents and then randomly redistribute
-        combined_flags = parent1.flags.union(parent2.flags)
-        shuffled_flags = list(combined_flags)
-        random.shuffle(shuffled_flags)
+        # Ensure there are flags to swap
+        if len(offspring1.flags) > 0 and len(offspring2.flags) > 0:
+            # Determine the crossover point (number of flags to swap)
+            crossover_point = random.randint(1, min(len(offspring1.flags), len(offspring2.flags)))
 
-        # Distribute the flags between the offspring
-        half = len(shuffled_flags) // 2
-        offspring1.flags = set(shuffled_flags[:half])
-        offspring2.flags = set(shuffled_flags[half:])
+            # Convert the sets of flags to lists for random sampling
+            flags_list1 = list(offspring1.flags)
+            flags_list2 = list(offspring2.flags)
 
-        # Ensure both offspring have the correct number of flags
-        self.adjust_flag_count(offspring1)
-        self.adjust_flag_count(offspring2)
+            # Select flags from each parent to swap
+            flags_to_swap1 = random.sample(flags_list1, crossover_point)
+            flags_to_swap2 = random.sample(flags_list2, crossover_point)
+
+            # Perform the swap
+            offspring1.flags.difference_update(flags_to_swap1)
+            offspring1.flags.update(flags_to_swap2)
+
+            offspring2.flags.difference_update(flags_to_swap2)
+            offspring2.flags.update(flags_to_swap1)
 
         return offspring1, offspring2
 
-    def tournament_selection(self, population, tournament_size):
-        """
-        Select individuals from the population using tournament selection.
 
-        :param population: The current population of individuals.
-        :param tournament_size: The number of individuals to be included in each tournament.
-        :return: Selected individuals for the next generation.
-        """
+    def tournament_selection(self, population, tournament_size):
         selected_individuals = []
 
         while len(selected_individuals) < len(population):
@@ -138,7 +165,8 @@ class Individual:
 
         return selected_individuals
 
-    def aggregate_wisdom_of_crowds(self,population):
+
+    def aggregate_wisdom_of_crowds(self, population):
         # Select the best 5% of individuals
         top_individuals = sorted(population, key=lambda ind: ind.fitness, reverse=True)[:max(1, len(population) // 20)]
 
@@ -148,52 +176,69 @@ class Individual:
             aggregated_flags.update(individual.flags)
 
         # Create a new individual with aggregated flags
-        aggregated_individual = Individual(population[0].size)
+        aggregated_individual = Individual(self.board, self.num_mines, population[0].grid_size)
         aggregated_individual.flags = aggregated_flags
         
         return aggregated_individual
 
-    def genetic_algorithm(self, board):
-        # Initialize the population
-        population = [Individual(self.size, self.num_mines) for _ in range(self.population_size)]
 
-        """
-        for i, individual in enumerate(population):
-            print(f"Individual {i}:")
-            print_board_with_flags(minesweeper_logic, individual)
-            # You can limit the number of printed boards if the population is large
-            if i >= 5:  # Change this number as needed
-                break
-        """
+    def genetic_algorithm(self, population_size, generations, tournament_size, mutation_rate, crossover_rate, total_mines, elitism_count):
+        # Initialize the population
+
+        population = [Individual(self.board, self.num_mines, self.grid_size) for _ in range(population_size)]
+
         # Evaluate the initial population
         for individual in population:
-            individual.fitness = self.calculate_fitness(individual, board)
+            individual.fitness = self.calculate_fitness(individual)
 
-        for generation in range(self.generations):
+        best_fitness_per_generation = []
+        
+        for generation in range(generations):
             # Selection
-            selected_individuals = self.tournament_selection(population, self.tournament_size)
+            selected_individuals = self.tournament_selection(population, tournament_size)
 
-            # Crossover and Mutation
+            # Crossover
             next_generation = []
-            while len(next_generation) < self.population_size:
-                parent1, parent2 = random.sample(selected_individuals, 2)
-                offspring1, offspring2 = self.crossover(parent1, parent2)
-                next_generation.extend([self.mutate(offspring1, board, self.num_mines, self.size), self.mutate(offspring2, board, self.num_mines, self.size)])
+            while len(next_generation) < population_size:
+                if random.random() < crossover_rate:  # Crossover occurs with a probability of crossover_rate
+                    parent1, parent2 = random.sample(selected_individuals, 2)
+                    offspring1, offspring2 = self.crossover(parent1, parent2)
+                    next_generation.extend([offspring1, offspring2])
+                else:
+                    next_generation.extend(random.sample(selected_individuals, 2))  # Directly select individuals without crossover
+                    
+            # Mutation
+            for individual in next_generation:
+                if random.random() < mutation_rate:  # Mutation occurs with a probability of mutation_rate
+                    self.mutate(individual)
+
+            elites = sorted(population, key=lambda ind: ind.fitness, reverse=True)[:elitism_count]
 
             # Evaluate the new generation
             for individual in next_generation:
-                individual.fitness = self.calculate_fitness(individual, board)
-                
+                individual.fitness = self.calculate_fitness(individual)
                 
             aggregated_individual = self.aggregate_wisdom_of_crowds(population)
-            aggregated_individual.fitness = self.calculate_fitness(aggregated_individual, board)
-            population[-1] = aggregated_individual  # Replace the least fit individual
+            aggregated_individual.fitness = self.calculate_fitness(aggregated_individual)
+            population[-20] = aggregated_individual  # Replace the least fit individual
 
             # Replace the old population with the new generation
             population = next_generation
-            self.improvement.append(max(population, key=lambda individual: individual.fitness).fitness)
+            
+            population[-elitism_count:] = elites
 
+            best_fitness = max(individual.fitness for individual in population)
+            best_fitness_per_generation.append(best_fitness)
+            
         # Return the best solution found
         best_solution = max(population, key=lambda individual: individual.fitness)
         
-        return best_solution
+        return max(population, key=lambda ind: ind.fitness), best_fitness_per_generation
+
+    def run_multiple_ga_iterations(self, iterations, population_size, generations, tournament_size, mutation_rate, crossover_rate, total_mines, elitism_count):
+        solutions = []
+        for _ in range(iterations):
+            solution, fitness_history = self.genetic_algorithm(population_size, generations, tournament_size, mutation_rate, crossover_rate, total_mines, elitism_count)
+            solutions.append(solution)
+            # Additional code for GIF creation goes here
+        return solutions

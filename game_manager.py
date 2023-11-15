@@ -23,8 +23,8 @@ class GameManager:
         settings = config.DIFFICULTIES.get(difficulty, config.DIFFICULTIES["Beginner"])
         # Clear any existing screen and start the game
         self.clear_screen()
-        logic = MinesweeperLogic(**settings)  # Create an instance of the logic class to use here 
-        AI = Individual(settings["size"])           # Create an instance of our genetic algorithm AI, with the selected board size
+        logic = MinesweeperLogic(**settings)                  # Create an instance of the logic class to use here 
+        AI = Individual(logic.board, logic.num_mines, logic.grid_size)                                     # Create an instance of our genetic algorithm AI, with the selected board size
         self.current_screen = MinesweeperGUI(self.root, **settings, player=player, loss_window=self.show_end_screen, win_window=self.show_win_screen, logic=logic, AI=AI)
 
     def show_win_screen(self):

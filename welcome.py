@@ -18,7 +18,6 @@ class WelcomeScreen:
             tt_img = tk.PhotoImage(file=icon_file)
             master.iconphoto(True, tt_img)
 
-
         tk.Label(master, text="Welcome to Minesweeper! Choose your difficulty:").pack()
 
         self.difficulty = tk.StringVar(master)
@@ -30,37 +29,62 @@ class WelcomeScreen:
         self.option_menu = tk.OptionMenu(master, self.difficulty, *options)
         self.option_menu.pack()
         
+        play_options = ['Player', 'AI']
+        
+        self.player = tk.StringVar(master)
+        self.player.set('Player')
+        
+        self.player_menu = tk.OptionMenu(master, self.player, *play_options)
+        self.player_menu.pack()
+        
         # set initial difficulty color based on default value
         self.update_color()
         
         # Trace the variable to change the OptionMenu color
         self.difficulty.trace("w", self.update_color)
+        self.player.trace("w", self.update_color)
 
         tk.Button(master, text="Start Game", command=self.on_start_game).pack()
         
-        self.center_window(400, 100)  # Set the size of the window and center it
+        self.center_window(config.welc_width, config.welc_height)  # Set the size of the window defined in config
 
     def on_start_game(self):
         difficulty = self.difficulty.get()
-        self.start_game_callback(difficulty)  # Call the callback with the selected difficulty
+        player = self.player.get()
+        self.start_game_callback(difficulty, player)  # Call the callback with the selected difficulty
 
     def update_color(self, *args):
-        difficulty = self.difficulty.get()
-        if difficulty == "Beginner":
-            color = "green"
-        elif difficulty == "Intermediate":
-            color = "yellow"
-        elif difficulty == "Expert":
-            color = "red"
-        else:
-            color = "white"  # Default color
-
-        self.option_menu.config(bg=color, activebackground=color)
+        """ update the color of the buttons based on current selections """
+        self.option_menu.config(bg=self.get_difficulty_color(), activebackground=self.get_difficulty_color())
+        self.player_menu.config(bg=self.get_player_color(), activebackground=self.get_player_color())
 
         # Additionally, bind the hover events to reset the color
-        self.option_menu.bind("<Enter>", lambda e: self.option_menu.config(bg=color))
-        self.option_menu.bind("<Leave>", lambda e: self.option_menu.config(bg=color))
+        self.option_menu.bind("<Enter>", lambda e: self.option_menu.config(bg=self.get_difficulty_color()))
+        self.option_menu.bind("<Leave>", lambda e: self.option_menu.config(bg=self.get_difficulty_color()))
 
+        self.player_menu.bind("<Enter>", lambda e: self.player_menu.config(bg=self.get_player_color()))
+        self.player_menu.bind("<Leave>", lambda e: self.player_menu.config(bg=self.get_player_color()))
+
+    def get_difficulty_color(self):
+        """ get the color for the difficulty button """
+        difficulty = self.difficulty.get()
+        if difficulty == "Beginner":
+            return "green"
+        elif difficulty == "Intermediate":
+            return "yellow"
+        elif difficulty == "Expert":
+            return "red"
+        return "white"
+
+    def get_player_color(self):
+        """ get color for player button """
+        player = self.player.get()
+        if player == "Player":
+            return "blue"
+        elif player == "AI":
+            return "red"
+        return "white"
+    
     def center_window(self, width, height):
         # Get screen width and height
         screen_width = self.master.winfo_screenwidth()

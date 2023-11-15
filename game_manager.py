@@ -6,6 +6,8 @@ import config
 from game_over import EndSplashScreen
 from winner import WinSplashScreen
 from welcome import WelcomeScreen
+from logic import MinesweeperLogic
+from genetic_algorithm import Individual
 
 class GameManager:
     def __init__(self):
@@ -17,11 +19,13 @@ class GameManager:
         self.current_screen = welcome_class(self.root, self.start_game)
         self.root.mainloop()
 
-    def start_game(self, difficulty):
+    def start_game(self, difficulty, player):
         settings = config.DIFFICULTIES.get(difficulty, config.DIFFICULTIES["Beginner"])
         # Clear any existing screen and start the game
         self.clear_screen()
-        self.current_screen = MinesweeperGUI(self.root, **settings, loss_window=self.show_end_screen, win_window=self.show_win_screen)
+        logic = MinesweeperLogic(**settings)  # Create an instance of the logic class to use here 
+        AI = Individual(settings["size"])           # Create an instance of our genetic algorithm
+        self.current_screen = MinesweeperGUI(self.root, **settings, player=player, loss_window=self.show_end_screen, win_window=self.show_win_screen, logic=logic, AI=AI)
 
     def show_win_screen(self):
         """ clear the gui and show the winner splash scree """

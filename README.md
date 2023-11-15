@@ -56,8 +56,10 @@ xlrd==2.0.1
 - **Wisdom of Crowds**: dadadadad
 
 ## Authors and Acknowledgment
-- Blake Hourigan - Initial work
-- Collaborators... 
+- Blake Hourigan - Game logic implementation, GUI development
+- Adam Van Zant - Genetic Algorithm 
+- Robert Walden
+- Bricker - Genetic Algorithm 
 
 ## License
 dadaddadad

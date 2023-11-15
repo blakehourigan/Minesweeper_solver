@@ -85,7 +85,6 @@ class MinesweeperGUI:
                 button.config(image=self.mine_image, width=config.button_width, height=config.button_height)
                 self.running = False
                 self.reveal_board()
-                time.sleep(5)  # Consider if this delay is necessary or optimal
                 self.loss_window()
             elif str(result).isdigit() and result != '0':
                 color = config.MINE_COLORMAP.get(result)
@@ -98,6 +97,8 @@ class MinesweeperGUI:
         for row_index, row_entries in enumerate(self.logic.board):
             for col_index, cell in enumerate(row_entries):
                 self._update_button_if_not_revealed(row_index, col_index, cell)
+        time.sleep(5)  # Consider if this delay is necessary or optimal
+
 
     def _update_button_if_not_revealed(self, row_index, col_index, cell):
         if not cell.is_revealed:

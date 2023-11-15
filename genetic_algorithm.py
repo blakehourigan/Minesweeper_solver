@@ -3,6 +3,7 @@ import random
 class Individual:
     def __init__(self, size):
         self.size = size  # settings size of the baord in both x,y directions to passed size param
+        self.num_mines = mines
         self.flags = set()  # Initialize flags
         self.population_size = 500
         self.generations = 500
@@ -28,12 +29,12 @@ class Individual:
         """
         return f"Flags: {self.flags}"
 
-    def print_board_with_flags(self, board):
+    def print_board_with_flags(self):
         print("Minesweeper Board with Flags:")
         for row in range(self.size):
             row_str = ''
             for col in range(self.size):
-                cell = board[row][col]
+                cell = self.board[row][col]
                 celltype = cell.get_type()
 
                 if (row, col) in self.flags:
@@ -46,8 +47,8 @@ class Individual:
                     row_str += 'E '  # Empty cell
             print(row_str)
         print()
-
-    def calculate_fitness(self,individual, board):
+        
+    def calculate_fitness(self, individual):
         """
         Calculate the fitness of an individual based on the Minesweeper board.
 
@@ -56,79 +57,67 @@ class Individual:
         :return: The fitness score of the individual.
         """
         correct_flags = 0
+        incorrect_flags = 0
         correct_opens = 0
+        incorrect_opens = 0
+        
 
         for row in range(self.size):
             for col in range(self.size):
-                cell = board[row][col]
-                celltype = (cell).get_type()
-                if celltype == "mine" and (row, col) in individual.flags:
-                    correct_flags += 1
-                elif not celltype == "mine" and (row, col) not in individual.flags:
-                    correct_opens += 1
+                cell = self.board[row][col]
+                celltype = cell.get_type()
+                is_flagged = (row, col) in individual.flags
+
+                if celltype == "mine":
+                    if is_flagged:
+                        correct_flags += 1
+                    else:
+                        incorrect_opens += 1  # Missed mine
+                else:
+                    if is_flagged:
+                        incorrect_flags += 1
+                    else:
+                        correct_opens += 1
 
         return correct_flags * 20 + correct_opens 
 
-    def mutate(self,individual, mutation_rate):
-        """
-        Mutate an individual by randomly redistributing a percentage of its flags.
-
-        :param individual: The individual to be mutated.
-        :param mutation_rate: The fraction of flags to be redistributed.
-        """
+    def mutate(self, individual, mutation_rate):
         rows, cols = self.size, self.size
         num_flags_to_mutate = int(len(individual.flags) * mutation_rate)
 
         # Convert the set of flags to a list for random sampling
         flags_list = list(individual.flags)
+        flags_to_remove = random.sample(flags_list, min(num_flags_to_mutate, len(flags_list)))
 
-        # Randomly select a number of flags to remove
-        if len(flags_list) >= num_flags_to_mutate:
-            flags_to_remove = random.sample(flags_list, num_flags_to_mutate)
-        else:
-            flags_to_remove = flags_list.copy()
+        individual.flags.difference_update(flags_to_remove)
 
-        # Remove the selected flags from the individual
-        for flag in flags_to_remove:
-            individual.flags.discard(flag)
-
-        # Add new random flags
-        while len(flags_to_remove) > 0:
+        # Add new random flags until the total count is back to num_mines
+        while len(individual.flags) < self.num_mines:
             new_row = random.randint(0, rows - 1)
             new_col = random.randint(0, cols - 1)
-            new_flag = (new_row, new_col)
-            if new_flag not in individual.flags:
-                individual.flags.add(new_flag)
-                flags_to_remove.pop()  # Remove one flag from the list
+            individual.flags.add((new_row, new_col))
 
         return individual
 
-    def crossover(self,parent1, parent2):
-        # Create deep copies of the parent individuals to become the offspring
-        offspring1 = Individual(parent1.size)
-        offspring1.flags = parent1.flags.copy()
-        offspring2 = Individual(parent2.size)
-        offspring2.flags = parent2.flags.copy()
 
-        # Ensure there are flags to swap
-        if len(offspring1.flags) > 0 and len(offspring2.flags) > 0:
-            # Determine the crossover point (number of flags to swap)
-            crossover_point = random.randint(1, min(len(offspring1.flags), len(offspring2.flags)))
+    def crossover(self, parent1, parent2):
+        # Create offspring with a combined set of flags from both parents
+        offspring1 = Individual(parent1.size, self.num_mines)
+        offspring2 = Individual(parent2.size, self.num_mines)
 
-            # Convert the sets of flags to lists for random sampling
-            flags_list1 = list(offspring1.flags)
-            flags_list2 = list(offspring2.flags)
+        # Combine flags from both parents and then randomly redistribute
+        combined_flags = parent1.flags.union(parent2.flags)
+        shuffled_flags = list(combined_flags)
+        random.shuffle(shuffled_flags)
 
-            # Select flags from each parent to swap
-            flags_to_swap1 = random.sample(flags_list1, crossover_point)
-            flags_to_swap2 = random.sample(flags_list2, crossover_point)
+        # Distribute the flags between the offspring
+        half = len(shuffled_flags) // 2
+        offspring1.flags = set(shuffled_flags[:half])
+        offspring2.flags = set(shuffled_flags[half:])
 
-            # Perform the swap
-            offspring1.flags.difference_update(flags_to_swap1)
-            offspring1.flags.update(flags_to_swap2)
-
-            offspring2.flags.difference_update(flags_to_swap2)
-            offspring2.flags.update(flags_to_swap1)
+        # Ensure both offspring have the correct number of flags
+        self.adjust_flag_count(offspring1)
+        self.adjust_flag_count(offspring2)
 
         return offspring1, offspring2
 
@@ -166,7 +155,7 @@ class Individual:
 
     def genetic_algorithm(self, board):
         # Initialize the population
-        population = [Individual(self.size) for _ in range(self.population_size)]
+        population = [Individual(self.size, self.num_mines) for _ in range(self.population_size)]
 
         """
         for i, individual in enumerate(population):
@@ -189,7 +178,7 @@ class Individual:
             while len(next_generation) < self.population_size:
                 parent1, parent2 = random.sample(selected_individuals, 2)
                 offspring1, offspring2 = self.crossover(parent1, parent2)
-                next_generation.extend([self.mutate(offspring1, self.mutation_rate), self.mutate(offspring2, self.mutation_rate)])
+                next_generation.extend([self.mutate(offspring1, board, self.num_mines, self.size), self.mutate(offspring2, board, self.num_mines, self.size)])
 
             # Evaluate the new generation
             for individual in next_generation:

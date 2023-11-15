@@ -36,26 +36,15 @@ class MinesweeperGUI:
 
         # Center the window
         self.center_window(window_width, window_height)
-        """   
-        if player == "AI":
-            self.logic.initialize_board_AI()
-            solution = self.AI.genetic_algorithm(self.logic.board)
-            self.reveal_board()
-            print(self.AI.improvement)
-         """   
-        if player == "AI":
-            # GA parameters
-            population_size = 250
-            generations = 250
-            tournament_size = 75
-            mutation_rate = 0.3
-            crossover_rate = 0.7
-            elitism_count = 10
-            iterations = 5
-            self.logic.initialize_board_AI()
+               
 
+   
+   
+        if player == "AI":
+            self.logic.initialize_board_AI()
             # Running the genetic algorithm
-            final_solutions = self.AI.run_multiple_ga_iterations(iterations, population_size, generations, tournament_size, mutation_rate, crossover_rate, self.logic.num_mines, elitism_count)
+            final_solutions = self.AI.run_multiple_ga_iterations(config.ITERATIONS, config.POPULATION_SIZE, config.GENERATIONS, config.TOURNAMENT_SIZE, \
+                config.MUTATION_RATE, config.CROSSOVER_RATE, self.logic.num_mines, config.ELITISM_COUNT)
 
             # Assuming final_solutions is a list of Individual objects
             for i, solution in enumerate(final_solutions):
@@ -65,6 +54,14 @@ class MinesweeperGUI:
                 self.AI.print_board_with_flags(solution)
                 print("\n")  # Newline for readability
                 self.reveal_board()
+
+        if player == "AI":
+
+            self.logic.initialize_board_AI()
+
+
+
+
     def create_button(self, master, row, column, width, height, size):
         # Create a frame to hold the button
         frame = tk.Frame(master)

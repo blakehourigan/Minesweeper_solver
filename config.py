@@ -33,6 +33,16 @@ MINE_COLORMAP = {
     'flag' : 'white'
 }
 
+# GA Parameters 
+
+POPULATION_SIZE = 250
+GENERATIONS = 250
+TOURNAMENT_SIZE = 75
+MUTATION_RATE = 0.3
+CROSSOVER_RATE = 0.7
+ELITISM_COUNT = 10
+ITERATIONS = 5
+
 # gui related configuration
 
 # main gui play buttons

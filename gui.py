@@ -44,7 +44,6 @@ class MinesweeperGUI:
             ga_thread = threading.Thread(target=self.run_genetic_algorithm)
             ga_thread.start()
             self.reveal_board()
-            print("Max Possible Fitness",self.AI.maximum_fitness())
 
 
     def run_genetic_algorithm(self):
@@ -58,19 +57,28 @@ class MinesweeperGUI:
         sheet = wb.active
 
         # Set headers
-        headers = ["Solution Number", "Flags", "Fitness", "Max Possible Fitness"]
+        headers = ["Solution Number", "Flags", "Mines", "Missing Mines", "Fitness", "# Flags in solution", "Total mines", "# Correct Flags", "% Correctly Identified","Max Possible Fitness"]
         sheet.append(headers)
 
         for i, solution in enumerate(final_solutions):
             solution_number = f"Solution {i+1}"
             flags_str = str(solution.flags)
+            mine_coords_str = str(self.logic.mine_coords)
+            missing_mines = ', '.join(str(s) for s in (self.logic.mine_coords - solution.flags) if s)            
             fitness_str = str(solution.fitness)
+            flag_num_str = str(len(solution.flags))
+            correct_flags = str(self.logic.num_mines - len(self.logic.mine_coords - solution.flags))
+            pct_correct = ((self.logic.num_mines - len(self.logic.mine_coords - solution.flags)) / self.logic.num_mines) * 100 
+
+            mines_str = str(self.logic.num_mines)
 
             # Append the data to the sheet
-            sheet.append([solution_number, flags_str, fitness_str, self.AI.maximum_fitness()])
+            sheet.append([solution_number, flags_str, mine_coords_str, missing_mines, fitness_str, flag_num_str, mines_str, correct_flags, pct_correct,self.AI.maximum_fitness()])
 
         # Save the workbook to a file
         wb.save("genetic_algorithm_results.xlsx")
+        print("Data Written...")
+        exit(1)
 
 
     def create_button(self, master, row, column, width, height, size):

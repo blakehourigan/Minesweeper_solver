@@ -9,6 +9,7 @@ class MinesweeperLogic:
         self.num_mines = mines
         self.grid_size = size
         self.board = [[Cell() for _ in range(self.grid_size)] for _ in range(self.grid_size)]
+        self.mine_coords = set()
         self.num_moves = 0
         self.score = 0
         self.running = False
@@ -66,7 +67,7 @@ class MinesweeperLogic:
         total_mines = self.num_mines
         mines_placed = 0
 
-        while mines_placed <= total_mines:
+        while mines_placed < total_mines:
             row = random.randint(0, self.grid_size - 1)
             column = random.randint(0, self.grid_size - 1)
 
@@ -75,6 +76,7 @@ class MinesweeperLogic:
             # Place mines in any cell other than the inital one
             if cell.get_type() == 'blank':
                 cell.set_type("mine")
+                self.mine_coords.add((row,column))
                 cell.is_mine = True
                 mines_placed += 1
     

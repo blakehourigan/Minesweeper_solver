@@ -6,6 +6,7 @@ import config
 from game_over import EndSplashScreen
 from winner import WinSplashScreen
 from welcome import WelcomeScreen
+from genetic_algorithm import Individual
 
 class GameManager:
     def __init__(self):
@@ -19,6 +20,7 @@ class GameManager:
 
     def start_game(self, difficulty):
         settings = config.DIFFICULTIES.get(difficulty, config.DIFFICULTIES["Beginner"])
+        AI_Player = Individual(**settings)
         # Clear any existing screen and start the game
         self.clear_screen()
         self.current_screen = MinesweeperGUI(self.root, **settings, loss_window=self.show_end_screen, win_window=self.show_win_screen)

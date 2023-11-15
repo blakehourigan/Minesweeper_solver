@@ -35,8 +35,14 @@ MINE_COLORMAP = {
 
 # gui related configuration
 
+# main gui play buttons
 button_width = 30
 button_height = 30
+
+# welcome window size
+
+welc_width = 400
+welc_height = 120
 
 def get_task_tray_icon():
     if platform.system() == "Windows":

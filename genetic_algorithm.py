@@ -1,10 +1,11 @@
 import random
+
 from logic import MinesweeperLogic
 import config
 
 
 class Individual:
-    def __init__(self, board_size):
+    def __init__(self, board_size, mines):
         # If board_size is an integer (square board), store it as a tuple (board_size, board_size)
         if isinstance(board_size, int):
             self.board_size = (board_size, board_size)
@@ -48,8 +49,7 @@ def print_board_with_flags(minesweeper_logic, individual):
                 row_str += 'E '  # Empty cell
         print(row_str)
     print()
-
-
+ 
 def calculate_fitness(individual, minesweeper_logic):
     """
     Calculate the fitness of an individual based on the Minesweeper board.
@@ -219,9 +219,10 @@ def genetic_algorithm(minesweeper_logic, population_size, generations, tournamen
     
     return best_solution
 
-
+"""
 # Choose a difficulty level
 difficulty = "Beginner"  # Example: "Beginner", "Intermediate", "Expert"
+
 
 # Retrieve grid size and number of mines from config
 grid_size = config.DIFFICULTIES[difficulty]["size"]
@@ -245,4 +246,4 @@ best_solution = genetic_algorithm(minesweeper_logic, population_size, generation
 print("Best solution found:", best_solution)
 
 print("Final Solution Board:")
-print_board_with_flags(minesweeper_logic, best_solution)
+print_board_with_flags(minesweeper_logic, best_solution)"""

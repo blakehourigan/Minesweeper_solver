@@ -41,7 +41,7 @@ class MinesweeperGUI:
             self.logic.initialize_board_AI()
             solution = self.AI.genetic_algorithm(self.logic.board)
             self.reveal_board()
-            print(solution)
+            print(self.AI.improvement)
 
     def create_button(self, master, row, column, width, height, size):
         # Create a frame to hold the button
@@ -81,8 +81,7 @@ class MinesweeperGUI:
             button = event.widget
 
             cell = self.logic.board[logic_row][logic_column]
-            cell.is_revealed = True
-            
+
             self._configure_button(button, cell)
             # check for a win
             if self.logic.check_for_win():
@@ -205,5 +204,4 @@ class MinesweeperGUI:
     
     def update_score(self):
         if self.logic.running:
-            self.score = self.logic.score
-            self.score_label.config(text=f"Score: {self.score}")
+            self.score_label.config(text=f"Score: {self.logic.get_score()}")

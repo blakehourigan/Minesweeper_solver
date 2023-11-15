@@ -35,14 +35,15 @@ class MinesweeperLogic:
     def reveal_cell(self, row, column):
         """Logic to reveal a cell; returns what's in the cell (mine, number, or empty)"""
         cell = self.board[row][column]
+        cell.is_revealed = True
         if self.num_moves == 0:
             cell.set_type('empty')
             self.place_mines()
             self.fill_remaining_board()
-            self.score += 1
+            self.count_current_score()
             self.num_moves += 1
         if cell.get_type != 'mine' and self.num_moves > 0:
-            self.score += 1
+            self.count_current_score()
             self.num_moves +=1
         return cell.get_type()
 
@@ -121,7 +122,7 @@ class MinesweeperLogic:
                         # Add the cell to be revealed if it is not a mine and not already revealed
                         if not neighbor_cell.is_mine and not neighbor_cell.is_revealed:
                             to_reveal.add((neighbor_row, neighbor_col))
-        self.score += len(revealed_cells)
+        self.count_current_score()
         return revealed_cells
 
     def count_adjacents(self, row, col):
@@ -140,6 +141,36 @@ class MinesweeperLogic:
 
         return count
 
+    def count_current_score(self):
+        """ Function to calculate the player's current score. """
+        score = 0
+        for row in self.board:
+            for cell in row:
+                if cell.get_type() != 'mine' and cell.is_revealed:
+                    score += 1
+
+        if self.check_for_win():
+            # Check if all mines are correctly flagged
+            all_mines_flagged = all(cell.get_type() == 'mine' and cell.is_flagged for row in self.board for cell in row)
+            if all_mines_flagged:
+                # Assign maximum score if all mines are correctly flagged
+                self.score = self.calculate_maximum_score()
+            else:
+                # Update score with the temporary score calculated
+                self.score = score + (sum(cell.is_flagged for row in self.board for cell in row)) * 20
+        else:
+            # Update score with the temporary score calculated
+            self.score = score
+
+    def calculate_maximum_score(self):
+        """ Calculate the maximum possible score. """
+        max_score = 0
+        for row in self.board:
+            for cell in row:
+                if cell.get_type() != 'mine':
+                    max_score += 1
+        return max_score + (self.num_mines * 20)  # Additional 20 points for each mine
+
     def check_for_win(self):
         """function to check if the player has won the game"""
         for row in self.board:
@@ -147,7 +178,6 @@ class MinesweeperLogic:
                 # if we find a cell that is not a mine and is not revealed yet, then we need to keep going
                 if not cell.type == 'mine' and not cell.is_revealed:
                     return False
-        self.score += (self.num_mines * 20) 
         return True                    
     
     def get_score(self):

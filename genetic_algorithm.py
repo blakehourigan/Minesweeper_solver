@@ -1,16 +1,17 @@
 import random
 
-
 class Individual:
     def __init__(self, size):
-        self.size = size  # Assuming size is already a tuple
+        self.size = size  # settings size of the baord in both x,y directions to passed size param
         self.flags = set()  # Initialize flags
-        self.initialize_random_flags()  # Call this method to place flags
         self.population_size = 500
         self.generations = 500
         self.tournament_size = 20
         self.mutation_rate = 0.3
-
+        
+        self.improvement = []
+        
+        self.initialize_random_flags()  # Call this method to place flags
 
     def initialize_random_flags(self):
         # Determine the number of flags to place
@@ -68,7 +69,6 @@ class Individual:
 
         return correct_flags * 20 + correct_opens 
 
-
     def mutate(self,individual, mutation_rate):
         """
         Mutate an individual by randomly redistributing a percentage of its flags.
@@ -102,7 +102,6 @@ class Individual:
                 flags_to_remove.pop()  # Remove one flag from the list
 
         return individual
-
 
     def crossover(self,parent1, parent2):
         # Create deep copies of the parent individuals to become the offspring
@@ -150,7 +149,6 @@ class Individual:
 
         return selected_individuals
 
-
     def aggregate_wisdom_of_crowds(self,population):
         # Select the best 5% of individuals
         top_individuals = sorted(population, key=lambda ind: ind.fitness, reverse=True)[:max(1, len(population) // 20)]
@@ -166,7 +164,6 @@ class Individual:
         
         return aggregated_individual
 
-
     def genetic_algorithm(self, board):
         # Initialize the population
         population = [Individual(self.size) for _ in range(self.population_size)]
@@ -179,7 +176,6 @@ class Individual:
             if i >= 5:  # Change this number as needed
                 break
         """
-        
         # Evaluate the initial population
         for individual in population:
             individual.fitness = self.calculate_fitness(individual, board)
@@ -199,42 +195,16 @@ class Individual:
             for individual in next_generation:
                 individual.fitness = self.calculate_fitness(individual, board)
                 
+                
             aggregated_individual = self.aggregate_wisdom_of_crowds(population)
             aggregated_individual.fitness = self.calculate_fitness(aggregated_individual, board)
             population[-1] = aggregated_individual  # Replace the least fit individual
 
             # Replace the old population with the new generation
             population = next_generation
-
-            # Optional: Store the most fit individual or perform other analyses
+            self.improvement.append(max(population, key=lambda individual: individual.fitness).fitness)
 
         # Return the best solution found
         best_solution = max(population, key=lambda individual: individual.fitness)
         
         return best_solution
-
-"""
-# Choose a difficulty level
-difficulty = "Beginner"  # Example: "Beginner", "Intermediate", "Expert"
-
-
-# Retrieve grid size and number of mines from config
-grid_size = config.DIFFICULTIES[difficulty]["size"]
-num_mines = config.DIFFICULTIES[difficulty]["mines"]
-
-# Initialize the MinesweeperLogic with the specific game settings
-minesweeper_logic = MinesweeperLogic(grid_size, num_mines)
-minesweeper_logic.initialize_mines()
-
-print("Initial Board State:")
-minesweeper_logic.print_board()
-
-# GA parameters
-
-
-# Running the genetic algorithm
-best_solution = genetic_algorithm(minesweeper_logic, population_size, generations, tournament_size, mutation_rate)
-print("Best solution found:", best_solution)
-
-print("Final Solution Board:")
-print_board_with_flags(minesweeper_logic, best_solution)"""

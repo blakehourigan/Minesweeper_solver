@@ -2,6 +2,7 @@
 import tkinter as tk
 import time
 import threading
+import openpyxl
 
 import config
 
@@ -52,14 +53,24 @@ class MinesweeperGUI:
             config.TOURNAMENT_SIZE, config.MUTATION_RATE, config.CROSSOVER_RATE, 
             self.logic.num_mines, config.ELITISM_COUNT)
 
+        # Create a new Excel workbook and select the active sheet
+        wb = openpyxl.Workbook()
+        sheet = wb.active
+
+        # Set headers
+        headers = ["Solution Number", "Flags", "Fitness", "Max Possible Fitness"]
+        sheet.append(headers)
+
         for i, solution in enumerate(final_solutions):
-            print(f"Solution {i+1}:")
-            print("Flags:", solution.flags)
-            print("Fitness:", solution.fitness)
-            self.AI.print_board_with_flags(solution)
-            print("\n")  # Newline for readability
+            solution_number = f"Solution {i+1}"
+            flags_str = str(solution.flags)
+            fitness_str = str(solution.fitness)
 
+            # Append the data to the sheet
+            sheet.append([solution_number, flags_str, fitness_str, self.AI.maximum_fitness()])
 
+        # Save the workbook to a file
+        wb.save("genetic_algorithm_results.xlsx")
 
 
     def create_button(self, master, row, column, width, height, size):

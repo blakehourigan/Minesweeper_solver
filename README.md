@@ -76,6 +76,10 @@ A crossover point is randomly selected to determine the amount of flags that wil
 ## License
 This project is licensed under the MIT License - see LICENSE.txt for details.
 
+## Project Future  
+*Moving away from Genetic Algorithm*  
+While genetic algorithms can be great for some applications, and are very useful and accurate for small problems, other methods will be explored to implement a more complete and accurate solution to every difficulty level, not just the beginner level.
+
 ## Contact
 - Blake Hourigan - Blakehourigan.com
 - Project Link: https://github.com/blakehourigan/Minesweeper_solver

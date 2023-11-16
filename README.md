@@ -33,9 +33,39 @@ openpyxl==3.1.2
   2) Execute main.exe on a windows machine. 
   ```
 
-## How It Works
-- **Genetic Algorithm**: dadadadada
-- **Wisdom of Crowds**: dadadadad
+## How It Works  
+**Genetic Algorithm**  
+  
+*Class setup*
+- Represents a solution to the randomly generated Minesweeper board.
+- Randomly places flags, equal to the total number of mines, at the inception of each individual
+
+*Mutation function*
+- Introduces variability by first removing a random subset of flags within the individual then adding new flags preferentially to cells with mines surrounding them
+- Ensures that the amount of flags that are removed and then added equals the total number of mines on the board
+
+*Elitism*
+- Guarantees that the best-performing individuals from the current generation are carried over directly to the next generation without being altered by crossover or mutation events
+- These elites replace the least fit individuals in the newest generation
+
+
+*Crossover function*  
+  
+Mixes and matches characteristics from two parent individuals to generate new offspring which inherit a combination of flag positions 
+A crossover point is randomly selected to determine the amount of flags that will be swapped. Flags are then randomly selected from each offspring based on this crossover point and exchanged between the two
+
+*Selection process*
+- A tournament selection process was introduced in order to choose individuals which are more likely to produce better offspring for the next generation
+- A subset of individuals is randomly chosen from the population and have their fitness values evaluated. After this, the most fit individual is selected as the winner, this is done until the population is filled with individuals that won each tournament 
+
+**Wisdom of Crowds**  
+  
+*WOTC Function*  
+- WOTC functionality focused on creating a new solution based on some of the best solutions in the current generation
+- The top 5% of highest fitness individuals were selected and their flag positions were aggregated in order to make a better solution
+- Flags which were placed by multiple of the top individuals were given precedent when passing on these flags to the new solution
+- This new solution replaced the lowest fitness individual in the current generation and then passed on to the next generation
+
 
 ## Authors and Acknowledgment
 - Blake Hourigan - Game logic implementation, GUI development

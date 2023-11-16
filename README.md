@@ -69,9 +69,9 @@ A crossover point is randomly selected to determine the amount of flags that wil
 
 ## Authors and Acknowledgment
 - Blake Hourigan - Game logic implementation, GUI development
-- Adam Van Zant - Genetic Algorithm 
+- Adam Van Zant - Genetic Algorithm / Wisdom of Crowds develoment, main author project paper
 - Robert Walden
-- Bricker - Genetic Algorithm 
+- Bricker - Genetic Algorithm / Wisdom of Crowds devloment
 
 ## License
 This project is licensed under the MIT License - see LICENSE.txt for details.

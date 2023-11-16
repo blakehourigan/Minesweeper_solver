@@ -74,7 +74,7 @@ A crossover point is randomly selected to determine the amount of flags that wil
 - Bricker - Genetic Algorithm 
 
 ## License
-dadaddadad
+This project is licensed under the MIT License - see LICENSE.txt for details.
 
 ## Contact
 - Blake Hourigan - Blakehourigan.com

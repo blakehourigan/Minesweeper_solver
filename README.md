@@ -69,9 +69,10 @@ openpyxl==3.1.2
 
 ## Authors and Acknowledgment
 - Blake Hourigan - Game logic implementation, GUI development
+- Bricker Oxley - Genetic Algorithm / Wisdom of Crowds devloment
 - Adam Van Zant - Genetic Algorithm / Wisdom of Crowds develoment, main author project paper
 - Robert Walden
-- Bricker - Genetic Algorithm / Wisdom of Crowds devloment
+
 
 ## License
 This project is licensed under the MIT License - see LICENSE.txt for details.

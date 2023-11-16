@@ -51,8 +51,8 @@ openpyxl==3.1.2
 
 *Crossover function*  
   
-Mixes and matches characteristics from two parent individuals to generate new offspring which inherit a combination of flag positions 
-A crossover point is randomly selected to determine the amount of flags that will be swapped. Flags are then randomly selected from each offspring based on this crossover point and exchanged between the two
+- Mixes and matches characteristics from two parent individuals to generate new offspring which inherit a combination of flag positions 
+- A crossover point is randomly selected to determine the amount of flags that will be swapped. Flags are then randomly selected from each offspring based on this crossover point and exchanged between the two
 
 *Selection process*
 - A tournament selection process was introduced in order to choose individuals which are more likely to produce better offspring for the next generation

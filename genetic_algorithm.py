@@ -73,7 +73,7 @@ class Individual:
                         correct_opens += 1
 
         # Calculate fitness
-        fitness = (correct_flags * 50) - (incorrect_flags * 10) + correct_opens - (incorrect_opens * 5)
+        fitness = (correct_flags * 50) - (incorrect_flags * 10) + correct_opens - (incorrect_opens * 20)
 
         # Penalize solutions that over-flag
         total_flags = len(individual.flags)
@@ -218,8 +218,6 @@ class Individual:
                 if random.random() < mutation_rate:  # Mutation occurs with a probability of mutation_rate
                     self.mutate(individual)
 
-            elites = sorted(population, key=lambda ind: ind.fitness, reverse=True)[:elitism_count]
-
             # Evaluate the new generation
             for individual in next_generation:
                 while len(individual.flags) < total_mines:
@@ -229,10 +227,12 @@ class Individual:
                     individual.flags.add((row, col))
 
                 individual.fitness = self.calculate_fitness(individual)
+
+            elites = sorted(population, key=lambda ind: ind.fitness, reverse=True)[:elitism_count]
                 
-            aggregated_individual = self.aggregate_wisdom_of_crowds(population)
+            aggregated_individual = self.aggregate_wisdom_of_crowds(next_generation)
             aggregated_individual.fitness = self.calculate_fitness(aggregated_individual)
-            population[-20] = aggregated_individual  # Replace the least fit individual
+            next_generation[-20] = aggregated_individual  # Replace the least fit individual
 
             # Replace the old population with the new generation
             population = next_generation

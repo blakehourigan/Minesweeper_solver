@@ -115,10 +115,12 @@ class Individual:
             potential_flags.extend([(r, c) for r in range(rows) for c in range(cols) if (r, c) not in individual.flags and (r, c) not in potential_flags])
 
         # Randomly add flags up to the limit of total mines
-        while len(individual.flags) < min(total_mines, len(individual.flags) + num_flags_to_remove):
+        while len(individual.flags) < total_mines:
             new_flag = random.choice(potential_flags)
             individual.flags.add(new_flag)
             potential_flags.remove(new_flag)
+            if new_flag not in individual.flags:
+                individual.flags.add(new_flag)
 
 
     def is_adjacent_to_number(self,row, col):
@@ -220,6 +222,12 @@ class Individual:
 
             # Evaluate the new generation
             for individual in next_generation:
+                while len(individual.flags) < total_mines:
+                    # Add flags if any are missing
+                    row = random.randint(0, individual.grid_size - 1)
+                    col = random.randint(0, individual.grid_size - 1)
+                    individual.flags.add((row, col))
+
                 individual.fitness = self.calculate_fitness(individual)
                 
             aggregated_individual = self.aggregate_wisdom_of_crowds(population)

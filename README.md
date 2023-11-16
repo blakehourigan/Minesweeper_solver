@@ -51,8 +51,8 @@ openpyxl==3.1.2
 
 *Crossover function*  
   
-Mixes and matches characteristics from two parent individuals to generate new offspring which inherit a combination of flag positions 
-A crossover point is randomly selected to determine the amount of flags that will be swapped. Flags are then randomly selected from each offspring based on this crossover point and exchanged between the two
+- Mixes and matches characteristics from two parent individuals to generate new offspring which inherit a combination of flag positions 
+- A crossover point is randomly selected to determine the amount of flags that will be swapped. Flags are then randomly selected from each offspring based on this crossover point and exchanged between the two
 
 *Selection process*
 - A tournament selection process was introduced in order to choose individuals which are more likely to produce better offspring for the next generation
@@ -69,12 +69,18 @@ A crossover point is randomly selected to determine the amount of flags that wil
 
 ## Authors and Acknowledgment
 - Blake Hourigan - Game logic implementation, GUI development
-- Adam Van Zant - Genetic Algorithm 
+- Bricker Oxley - Genetic Algorithm / Wisdom of Crowds devloment
+- Adam Van Zant - Genetic Algorithm / Wisdom of Crowds develoment, main author project paper
 - Robert Walden
-- Bricker - Genetic Algorithm 
+
 
 ## License
-dadaddadad
+This project is licensed under the MIT License - see LICENSE.txt for details.
+
+## Project Future  
+*Moving away from Genetic Algorithm approach*  
+
+While genetic algorithms can be great for some applications, and are very useful and accurate for small problems, other methods will be explored to implement a more complete and accurate solution to every difficulty level, not just the beginner level.
 
 ## Contact
 - Blake Hourigan - Blakehourigan.com

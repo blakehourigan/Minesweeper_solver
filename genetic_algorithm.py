@@ -1,8 +1,5 @@
 import random
 
-import config
-
-
 class Individual:
     def __init__(self, board, mines, size):
         self.flags = set()  # Initialize flags

@@ -17,7 +17,7 @@ class EndSplashScreen:
         image_width = self.game_over_image.width()
         image_height = self.game_over_image.height()
 
-        # Make sure the game over window takes focus over the main application window
+        # Give game over window focus over the main application window
         self.master.grab_set()
 
         # Label displaying the game over image
@@ -28,7 +28,7 @@ class EndSplashScreen:
         button_frame_height = 80  # Set the height you want for the buttons
         button_frame = tk.Frame(self.master, height=button_frame_height)
         button_frame.pack(fill=tk.X, side=tk.BOTTOM)
-        button_frame.pack_propagate(False)  # Prevent the frame from shrinking to the size of its contents
+        button_frame.pack_propagate(False)  # Prevent the frame from shrinking 
 
         # Restart button
         restart_button = tk.Button(button_frame, text="Restart", command=restart_game, bg='green')
@@ -38,12 +38,11 @@ class EndSplashScreen:
         exit_button = tk.Button(button_frame, text="Exit", command=destroy_game, bg='red')
         exit_button.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5)
         
-        
-        # Calculate the total height needed (image + button height + padding)
-        total_height = image_height + button_frame_height  # Assume button height ~40px, and add 20px padding
+        # Calculate the total height needed 
+        total_height = image_height + button_frame_height 
 
-        # Calculate the total width needed (image width + padding)
-        total_width = image_width + 20  # Add 20px padding
+        # Calculate the total width needed, image + padding
+        total_width = image_width + 20 
         
         # Set the window size to accommodate the image and buttons
         self.master.geometry(f"{total_width}x{total_height}+"

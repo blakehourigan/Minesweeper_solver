@@ -8,7 +8,6 @@ class Individual:
         self.grid_size = size
         self.initialize_random_flags()  # Call this method to place flags
 
-
     def initialize_random_flags(self):
         # Determine the number of flags to place
         num_flags = self.num_mines  # Use the first element of the tuple for row size

@@ -38,7 +38,6 @@ class WinSplashScreen:
         exit_button = tk.Button(button_frame, text="Exit", command=destroy_game, bg='red')
         exit_button.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5)
         
-        
         # Calculate the total height needed (image + button height + padding)
         total_height = image_height + button_frame_height  # Assume button height ~40px, and add 20px padding
 

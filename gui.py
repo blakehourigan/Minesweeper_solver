@@ -42,15 +42,14 @@ class MinesweeperGUI:
 
         # Center the window
         self.center_window(window_width, window_height)          
-        if player == "AI" and ai_solution is None:  # This prevents the infinite loop
+        if player == "AI" and ai_solution is None: # prevent infinite loop
             self.logic.initialize_board_AI()
             self.reveal_board()
             ga_thread = threading.Thread(target=self.run_genetic_algorithm)
             ga_thread.start()
         elif ai_solution is not None:
             self.reveal_board()
-            self.overlay_ai_flags(ai_solution)  # Call this method to display the AI's flags
-
+            self.overlay_ai_flags(ai_solution)  # Call this method to display the AI's solution
 
     def run_genetic_algorithm(self):
         start_time = time.time()
@@ -70,9 +69,10 @@ class MinesweeperGUI:
         # Set headers
         headers = ["Execution Time", "Solution Number", "Flags", "Mines", "Missing Mines", "Fitness", "# Flags in solution", "Total mines", "# Correct Flags", "% Correctly Identified","Max Possible Fitness"]
         sheet.append(headers)
+        # append execution time
         sheet['A2'] = str(self.AI_exec_time)
         for i, solution in enumerate(final_solutions):
-            # Assuming 'root' is your Tkinter root window and 'ai_solution' is an instance of 'Individual' with the AI's flags
+            # create strings to add to excel sheet columns
             solution_number = f"Solution {i+1}"
             flags_str = str(solution.flags)
             mine_coords_str = str(self.logic.mine_coords)
@@ -93,7 +93,7 @@ class MinesweeperGUI:
 
     def show_ai_solution(self, solution_index,ai_solution):
         """Creates a new window to display the AI's flags."""
-        # Create a Toplevel window
+        # Create a new window for AI solutions
         top = tk.Toplevel(self.master)
         top.title(f"AI's Solution #{solution_index + 1}")
                 
@@ -113,7 +113,7 @@ class MinesweeperGUI:
                     if (row, col) not in self.flag_images:
                         self.flag_images[(row, col)] = tk.PhotoImage(file=config.flag_image)
                     button.config(relief=tk.RAISED, image=self.flag_images[(row, col)])
-                    button.image = self.flag_images[(row, col)]  # Keep a reference
+                    button.image = self.flag_images[(row, col)] # add to flag_images global class dict
 
     def create_button(self, master, row, column, width, height, size):
         # Create a frame to hold the button
@@ -129,7 +129,7 @@ class MinesweeperGUI:
             # right click bound to setting flags
             button.bind('<Button-3>', lambda event, r=row, c=column: self.on_right_click(r, c)(event))
 
-        button.pack(expand=True, fill='both')  # Button will fill the entire frame
+        button.pack(expand=True, fill='both')  # pack button to fill full frame
 
         return button
 
@@ -232,7 +232,7 @@ class MinesweeperGUI:
         return callback
 
     def load_image(self, master):
-        # Get the appropriate icon file based on the OS
+        # Get the appropriate icon file based on the OS used
         icon_file = config.get_task_tray_icon()
 
         if icon_file.endswith('.ico'):
@@ -249,7 +249,7 @@ class MinesweeperGUI:
 
     def setup_grid(self, master, size):
         # Adjust layout for the new elements
-        master.grid_rowconfigure(1, weight=1)  # Adjusting for the new row with labels
+        master.grid_rowconfigure(1, weight=1)  # Adjusting for label row
         # create layout for the elements on the screen
         master.grid_rowconfigure(0, weight=0)  
         for i in range(1, size + 1):

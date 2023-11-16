@@ -9,7 +9,7 @@ class WelcomeScreen:
         self.start_game_callback = start_game_callback
         master.title("Welcome to Minesweeper")
         
-        # Get the appropriate icon file based on the OS
+        # Get the appropriate icon file based on the OS being used
         icon_file = config.get_task_tray_icon()
 
         if icon_file.endswith('.ico'):

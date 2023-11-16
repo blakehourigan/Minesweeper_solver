@@ -4,9 +4,10 @@ import platform
 
 from pathlib import Path
 
-# Construct an absolute path to the image
+# location where the script is running
 script_location = Path(__file__).resolve().parent
 
+# subfolder location where images are located 
 mine_image = str(script_location / 'assets' / 'bomb.png')
 flag_image = str(script_location / 'assets' / 'flag.png')
 
@@ -45,7 +46,6 @@ ITERATIONS = 5
 
 # gui related configuration
 
-# main gui play buttons
 button_width = 30
 button_height = 30
 
